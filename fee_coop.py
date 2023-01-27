@@ -42,8 +42,8 @@ class FeeCoop(interactions.Extension):
                         "group_pass" : "", 
                         "turns" : [
                                 {
-                                    "user" : ctx.user.id,
-                                    "server" : ctx.guild_id,
+                                    "user" : str(ctx.user.id),
+                                    "server" : str(ctx.guild_id),
                                     "timestamp" : datetime.datetime.utcnow(),
                                 },
                             ],
