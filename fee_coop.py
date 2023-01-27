@@ -44,7 +44,7 @@ class FeeCoop(interactions.Extension):
                                 {
                                     "user" : str(ctx.user.id),
                                     "server" : str(ctx.guild_id),
-                                    "timestamp" : datetime.datetime.utcnow(),
+                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                             ],
                     }
