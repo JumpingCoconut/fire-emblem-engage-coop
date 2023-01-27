@@ -114,7 +114,7 @@ class FeeCoop(interactions.Extension):
                 embed.set_footer(interactions.EmbedFooter(text="Only for server: " + guild.name))
 
         if created_on:
-            embed.timestamp=datetime.date.fromisoformat(created_on)
+            embed.timestamp=datetime.datetime.fromisoformat(created_on)
 
         if started_by:
             embed.set_author(name=user.username + "#" + user.discriminator, icon_url=user.avatar_url)
@@ -126,7 +126,7 @@ class FeeCoop(interactions.Extension):
                 if server != started_on_server:
                     guild = await interactions.get(self.bot, interactions.Guild, object_id=server)
                     username += " (from discord server " + server.name + ")"
-                timestamp = datetime.date.fromisoformat(turn["timestamp"])
+                timestamp = datetime.datetime.fromisoformat(turn["timestamp"])
                 utc_time = calendar.timegm(timestamp.utctimetuple())
                 timestamp_discordstring = "<t:" + str(utc_time) + ":R>"
                 embed.add_field(name=username, value=timestamp_discordstring, inline=True)
