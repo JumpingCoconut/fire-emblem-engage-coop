@@ -12,8 +12,8 @@ debug_mode=bool(config['DEBUG_MODE'] == "True")
 
 # To use files in CommandContext send, you need to load it as an extension.
 bot.load("interactions.ext.files")
-bot.load("discordbot_soundboard")
-soundboard = bot.get_extension("Soundboard")
+bot.load("fee_coop")
+soundboard = bot.get_extension("FeeCoop")
 
 @bot.event
 async def on_start():
