@@ -2,3 +2,4 @@ aiohttp==3.8.3
 chardet==5.1.0
 interactions_files==1.1.5
 python-dotenv==0.21.1
+tinydb==4.7.1

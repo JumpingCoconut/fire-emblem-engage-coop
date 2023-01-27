@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 import json
 import chardet
@@ -8,6 +9,7 @@ from interactions import Button, SelectMenu, SelectOption, spread_to_rows, autod
 import os
 from dotenv import dotenv_values
 from helpers import *
+from tinydb import TinyDB, Query
 
 # Set up logging
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO, handlers=[logging.FileHandler('logs/fee_coop.log'),logging.StreamHandler()])
@@ -23,6 +25,8 @@ debug_mode=bool(config['DEBUG_MODE'] == "True")
 class FeeCoop(interactions.Extension):
     def __init__(self, client):
         self.bot: interactions.Client = client
+        # All information about our games
+        self.db = TinyDB('db.json')
         logging.info("FeeCoop loaded!")
 
     # Rightclick to check the message for game IDs
@@ -31,8 +35,29 @@ class FeeCoop(interactions.Extension):
         name="Show Game"
     )
     async def fee_coop_rightclick_show_game(self, ctx):
+        # Insert one test game
+        user = await interactions.get(self.bot, interactions.User, object_id=ctx.user)
+        guild = await interactions.get(self.bot, interactions.Guild, object_id=ctx.guild)
+        new_item = {    "code": "666NB4R", 
+                        "map": "Mountains", 
+                        "server_only" : False,
+                        "group_pass" : "", 
+                        "turns" : [
+                                {
+                                    "user" : user,
+                                    "server" : guild,
+                                    "timestamp" : datetime.datetime.utcnow(),
+                                },
+                            ],
+                    }
+        self.db.insert(new_item) 
+        # Now search an entry
+        Games = Query()
+        results = self.db.search(Games.code == "666NB4R")
+
         messagetext = ctx.target.content
-        return await ctx.send("Messagetext is: " + messagetext, ephemeral=True)
+        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results), ephemeral=True)
+        
 
 def setup(client):
     FeeCoop(client)
