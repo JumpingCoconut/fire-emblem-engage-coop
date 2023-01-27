@@ -29,12 +29,27 @@ class FeeCoop(interactions.Extension):
         # All information about our maps just in code
         self.mapdata = [ 
             None, 
-            {"name": "Grass field", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
-            {"name": "Flower field", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
-            {"name": "Mountains", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
-            {"name": "Winter forest", "difficulty": "hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
-            {"name": "Desert sand", "difficulty": "hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": []},
+            {"name": "Verdant Plain", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Res Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
+            {"name": "Floral Field", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Def Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
+            {"name": "Mountain Peak", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Dex Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
+            {"name": "Winter Forest", "difficulty": "Hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Spd Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
+            {"name": "Desert Dunes", "difficulty": "Hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": ["Crit Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
         ]
+        self.emoji = {
+            "avo" : "<:avo:1068643333716586637>", 
+            "crit" : "<:crit:1068643336178630796>",
+            "ddg" : "<:ddg:1068643337550180403>",
+            "dex" : "<:dex:1068643339227897977>",
+            "hit" : "<:hit:1068643341757055006>>",
+            "res" : "<:res:1068643357322117121>",
+            "spd" : "<:spd:1068643359448637552>",
+            "map1" : "<:map1:1068643343418015905>",
+            "map2" : "<:map2:1068643345334800467>",
+            "map3" : "<:map3:1068643347486486618>",
+            "map4" : "<:map4:1068643350376353792>",
+            "map5" : "<:map5:1068643351697559693>",
+        }
+
         # Active games from database
         self.db = TinyDB('db.json')
         logging.info("FeeCoop loaded!")
@@ -67,7 +82,22 @@ class FeeCoop(interactions.Extension):
             maxplayers = self.mapdata[map]["maxplayers"]
             possible_rewards = self.mapdata[map]["possible_rewards"]
             mapname = self.mapdata[map]["name"]
-            embed.description = mapname + " (" + difficulty + ")"
+            # First line: Map
+            try: 
+                mapemoji = self.emoji["map" + str(map)]
+            except:
+                mapemoji = ""
+            embed.description = "Map:" + mapname + " " + mapemoji + " (" + difficulty + ")"
+            # Second line: Turns
+            embed.description += "\nTurns: " + str(maxturns) + " (" + str(maxplayers) + " players)"
+            # Remaining lines: Rewards
+            embed.description += "\nReward:"
+            for reward in possible_rewards:
+                try: 
+                    rewardemoji = self.emoji[reward.lower().split()[0]]
+                except:
+                    rewardemoji = ""
+                    embed.description += "\n" + rewardemoji + " " + reward
 
         if server_only or group_pass:
             # Group pass beats server ID
