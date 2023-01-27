@@ -1,4 +1,5 @@
 import asyncio
+import calendar
 import datetime
 import logging
 import json
@@ -61,11 +62,11 @@ class FeeCoop(interactions.Extension):
 
         embed = interactions.Embed(title=code, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
         if map:
-            difficulty = self.mapdata[map]
-            maxturns = self.mapdata[map]
-            maxplayers = self.mapdata[map]
-            possible_rewards = self.mapdata[map]
-            mapname = self.mapdata[map]
+            difficulty = self.mapdata[map]["difficulty"]
+            maxturns = self.mapdata[map]["maxturns"]
+            maxplayers = self.mapdata[map]["maxplayers"]
+            possible_rewards = self.mapdata[map]["possible_rewards"]
+            mapname = self.mapdata[map]["name"]
             embed.description = mapname + " (" + difficulty + ")"
 
         if server_only or group_pass:
@@ -89,8 +90,10 @@ class FeeCoop(interactions.Extension):
                 if server != started_on_server:
                     guild = await interactions.get(self.bot, interactions.Guild, object_id=server)
                     username += " (from discord server " + server.name + ")"
-                timestamp = turn["timestamp"]
-                embed.add_field(name=username, value=timestamp, inline=True)
+                timestamp = datetime.fromisoformat(turn["timestamp"])
+                utc_time = calendar.timegm(timestamp.utctimetuple())
+                timestamp_discordstring = "<t:" + str(utc_time) + ":R>"
+                embed.add_field(name=username, value=timestamp_discordstring, inline=True)
         
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
