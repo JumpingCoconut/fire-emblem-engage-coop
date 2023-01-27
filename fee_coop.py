@@ -130,6 +130,8 @@ class FeeCoop(interactions.Extension):
                 utc_time = calendar.timegm(timestamp.utctimetuple())
                 timestamp_discordstring = "<t:" + str(utc_time) + ":R>"
                 embed.add_field(name=username, value=timestamp_discordstring, inline=True)
+
+        return embed
         
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
@@ -163,7 +165,8 @@ class FeeCoop(interactions.Extension):
         if len(results) > 0:
             found_games = []
             for result in results:
-                found_games = await self.build_embed_for_game(result.doc_id)
+                embed = await self.build_embed_for_game(result.doc_id)
+                found_games.append(embed)
                 #found_games.append("Code: " + result["code"] + " Map: " + result["map"])
             return await ctx.send(embeds=found_games, ephemeral=True)
         else:
