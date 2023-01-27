@@ -151,6 +151,7 @@ class FeeCoop(interactions.Extension):
         else:
             color = interactions.Color.red()
 
+        title = code
         if status:
             title += " (" + status + ")"
 
