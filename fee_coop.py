@@ -56,9 +56,15 @@ class FeeCoop(interactions.Extension):
         user = await interactions.get(self.bot, interactions.User, object_id=results[0]["turns"][0]["user"])
         guild = await interactions.get(self.bot, interactions.Guild, object_id=results[0]["turns"][0]["server"])
 
-
-        messagetext = ctx.target.content
-        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results) + " User is "+ user.mention + " and server is " + guild.name, ephemeral=True)
+        game_ids = ctx.target.content.split()
+        results = self.db.search(Games.code.one_of(game_ids))
+        if len(results) > 0:
+            found_games = []
+            for result in results:
+                found_games.append("Code: " + result["code"] + " Map: " + result["map"])
+            return await ctx.send("Found games are: " + "\n".join(found_games), ephemeral=True)
+        else:
+            return await ctx.send("No valid codes found in this message.", ephemeral=True)
         
 
 def setup(client):
