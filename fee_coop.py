@@ -75,8 +75,8 @@ class FeeCoop(interactions.Extension):
                         "status" : "open",
                         "turns" : [
                                 {
-                                    "user" : str(745642457101893643),
-                                    "server" : str(490564578128822293),
+                                    "user" : str(523211690213376005),
+                                    "server" : str(870019135646613524),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
@@ -94,27 +94,27 @@ class FeeCoop(interactions.Extension):
                         "status" : "success",
                         "turns" : [
                                 {
-                                    "user" : str(307624030704238592),
-                                    "server" : str(490564578128822293),
+                                    "user" : str(234861064532131842),
+                                    "server" : str(870019135646613524),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
                                     "user" : str(330955309763788800),
+                                    "server" : str(870019135646613524),
+                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                },
+                                {
+                                    "user" : str(523211690213376005),
                                     "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
-                                    "user" : str(745642457101893643),
-                                    "server" : str(490564578128822293),
+                                    "user" : str(363144319739232257),
+                                    "server" : str(870019135646613524),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
-                                    "user" : str(737637662764171375),
-                                    "server" : str(490564578128822293),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(745642457101893643),
+                                    "user" : str(307624030704238592),
                                     "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
