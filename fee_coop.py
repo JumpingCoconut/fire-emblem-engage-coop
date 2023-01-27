@@ -76,6 +76,12 @@ class FeeCoop(interactions.Extension):
             title += " (" + status + ")"
 
         embed = interactions.Embed(title=code, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+
+        # Check the map data
+        try:
+            map = int(map)
+        except ValueError:
+            map = False
         if map:
             difficulty = self.mapdata[map]["difficulty"]
             maxturns = self.mapdata[map]["maxturns"]
