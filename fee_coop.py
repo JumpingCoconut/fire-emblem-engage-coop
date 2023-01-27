@@ -76,7 +76,7 @@ class FeeCoop(interactions.Extension):
                         "turns" : [
                                 {
                                     "user" : str(745642457101893643),
-                                    "server" : str(737637662764171375),
+                                    "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
@@ -91,11 +91,11 @@ class FeeCoop(interactions.Extension):
                         "map": 5, 
                         "server_only" : False,
                         "group_pass" : "11118888", 
-                        "status" : "failure",
+                        "status" : "success",
                         "turns" : [
                                 {
                                     "user" : str(307624030704238592),
-                                    "server" : str(563903641631719429),
+                                    "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
@@ -105,7 +105,7 @@ class FeeCoop(interactions.Extension):
                                 },
                                 {
                                     "user" : str(745642457101893643),
-                                    "server" : str(563903641631719429),
+                                    "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
@@ -115,7 +115,7 @@ class FeeCoop(interactions.Extension):
                                 },
                                 {
                                     "user" : str(745642457101893643),
-                                    "server" : str(563903641631719429),
+                                    "server" : str(490564578128822293),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                             ],
