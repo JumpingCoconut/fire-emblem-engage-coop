@@ -234,7 +234,6 @@ class FeeCoop(interactions.Extension):
             return await ctx.send(embeds=found_games, ephemeral=True)
         else:
             return await ctx.send("No valid codes found in this message.", ephemeral=True)
-        
 
 def setup(client):
     FeeCoop(client)
