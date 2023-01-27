@@ -25,5 +25,14 @@ class FeeCoop(interactions.Extension):
         self.bot: interactions.Client = client
         logging.info("FeeCoop loaded!")
 
+    # Rightclick to check the message for game IDs
+    @interactions.extension_command(
+        type=interactions.ApplicationCommandType.MESSAGE,
+        name="Show Game"
+    )
+    async def fee_coop_rightclick_show_game(self, ctx):
+        messagetext = ctx.target.content
+        return await ctx.send("Messagetext is: " + messagetext, ephemeral=True)
+
 def setup(client):
     FeeCoop(client)
