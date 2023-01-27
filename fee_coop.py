@@ -53,14 +53,14 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
-        make_testdata = True
+        make_testdata = False
         if make_testdata:
             # Test data
             new_item = {    "code": "666NB4R", 
                             "map": 3, 
                             "server_only" : False,
                             "group_pass" : "", 
-                            "status" : "fail",
+                            "status" : "failed",
                             "turns" : [
                                     {
                                         "user" : "330955309763788800", # str(ctx.user.id),
@@ -155,7 +155,7 @@ class FeeCoop(interactions.Extension):
         if status:
             title += " (" + status + ")"
 
-        embed = interactions.Embed(title=status, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+        embed = interactions.Embed(title=title, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
 
         # Check the map data
         try:
@@ -229,9 +229,14 @@ class FeeCoop(interactions.Extension):
         results = self.db.search(Games.code.one_of(game_ids))
         if len(results) > 0:
             found_games = []
+            embed_counter = 0
             for result in results:
                 embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
                 found_games.append(embed)
+                embed_counter += 1
+            while(embed < 25):
+                found_games.append(embed)
+                embed_counter += 1
             return await ctx.send(embeds=found_games, ephemeral=True)
         else:
             return await ctx.send("No valid codes found in this message.", ephemeral=True)
