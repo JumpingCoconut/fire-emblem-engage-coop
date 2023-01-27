@@ -36,8 +36,8 @@ class FeeCoop(interactions.Extension):
     )
     async def fee_coop_rightclick_show_game(self, ctx):
         # Insert one test game
-        user = await interactions.get(self.bot, interactions.User, object_id=ctx.user)
-        guild = await interactions.get(self.bot, interactions.Guild, object_id=ctx.guild)
+        user = await interactions.get(self.bot, interactions.User, object_id=ctx.user.id)
+        guild = await interactions.get(self.bot, interactions.Guild, object_id=ctx.guild_id)
         new_item = {    "code": "666NB4R", 
                         "map": "Mountains", 
                         "server_only" : False,
