@@ -25,10 +25,73 @@ debug_mode=bool(config['DEBUG_MODE'] == "True")
 class FeeCoop(interactions.Extension):
     def __init__(self, client):
         self.bot: interactions.Client = client
-        # All information about our games
+        # All information about our maps just in code
+        self.mapdata = [ 
+            None, 
+            {"name": "Grass field", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
+            {"name": "Flower field", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
+            {"name": "Mountains", "difficulty": "normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
+            {"name": "Winter forest", "difficulty": "hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": []},
+            {"name": "Desert sand", "difficulty": "hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": []},
+        ]
+        # Active games from database
         self.db = TinyDB('db.json')
         logging.info("FeeCoop loaded!")
 
+    # Makes one embed for each given game ID
+    async def build_embed_for_game(self, doc_id):
+        entry = self.db.get(doc_id=doc_id)
+        code = entry["code"]
+        map = entry.get("map")
+        server_only = entry.get("server_only")
+        group_pass = entry.get("group_pass")
+        status = entry.get("status")
+        turns = entry.get("turns", [])
+        if len(turns) > 0:
+            created_on = turns[0]["timestamp"]
+            started_by = turns[0]["user"]
+            started_on_server = turns[0]["server"]
+            user = await interactions.get(self.bot, interactions.User, object_id=started_by)
+            color = assign_color_to_user(user.username)
+        else:
+            color = interactions.Color.red()
+
+        if status:
+            title += " (" + status + ")"
+
+        embed = interactions.Embed(title=code, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+        if map:
+            difficulty = self.mapdata[map]
+            maxturns = self.mapdata[map]
+            maxplayers = self.mapdata[map]
+            possible_rewards = self.mapdata[map]
+            mapname = self.mapdata[map]
+            embed.description = mapname + " (" + difficulty + ")"
+
+        if server_only or group_pass:
+            # Group pass beats server ID
+            if group_pass:
+                embed.set_footer(interactions.EmbedFooter(text="Group pass: " + group_pass))
+            elif server_only and started_on_server:
+                guild = await interactions.get(self.bot, interactions.Guild, object_id=started_on_server)
+                embed.set_footer(interactions.EmbedFooter(text="Only for server: " + guild.name))
+
+        if created_on:
+            embed.timestamp=datetime.fromisoformat(created_on)
+
+        if started_by:
+            embed.set_author(name=user.username + "#" + user.discriminator, icon_url=user.avatar_url)
+
+        if len(turns) > 1:
+            for turn in turns[1:]:
+                username = turn["user"]
+                server = turn["server"]
+                if server != started_on_server:
+                    guild = await interactions.get(self.bot, interactions.Guild, object_id=server)
+                    username += " (from discord server " + server.name + ")"
+                timestamp = turn["timestamp"]
+                embed.add_field(name=username, value=timestamp, inline=True)
+        
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
         type=interactions.ApplicationCommandType.MESSAGE,
@@ -37,7 +100,7 @@ class FeeCoop(interactions.Extension):
     async def fee_coop_rightclick_show_game(self, ctx):
         # Insert one test game
         new_item = {    "code": "666NB4R", 
-                        "map": "Mountains", 
+                        "map": "1", 
                         "server_only" : False,
                         "group_pass" : "", 
                         "turns" : [
@@ -61,8 +124,9 @@ class FeeCoop(interactions.Extension):
         if len(results) > 0:
             found_games = []
             for result in results:
-                found_games.append("Code: " + result["code"] + " Map: " + result["map"])
-            return await ctx.send("Found games are: " + "\n".join(found_games), ephemeral=True)
+                found_games = await self.build_embed_for_game(result.doc_id)
+                #found_games.append("Code: " + result["code"] + " Map: " + result["map"])
+            return await ctx.send(embeds=found_games, ephemeral=True)
         else:
             return await ctx.send("No valid codes found in this message.", ephemeral=True)
         
