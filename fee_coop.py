@@ -29,18 +29,18 @@ class FeeCoop(interactions.Extension):
         # All information about our maps just in code
         self.mapdata = [ 
             None, 
-            {"name": "Verdant Plain", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Res Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
-            {"name": "Floral Field", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Def Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
-            {"name": "Mountain Peak", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Dex Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
-            {"name": "Winter Forest", "difficulty": "Hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Spd Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
-            {"name": "Desert Dunes", "difficulty": "Hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": ["Crit Crystal", "Hit Crystal", "Avo Crystal", "Dgd Crystal"]},
+            {"name": "Verdant Plain", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Res Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
+            {"name": "Floral Field", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Def Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
+            {"name": "Mountain Peak", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Dex Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
+            {"name": "Winter Forest", "difficulty": "Hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Spd Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
+            {"name": "Desert Dunes", "difficulty": "Hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": ["Crit Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
         ]
         self.emoji = {
             "avo" : "<:avo:1068643333716586637>", 
             "crit" : "<:crit:1068643336178630796>",
             "ddg" : "<:ddg:1068643337550180403>",
             "dex" : "<:dex:1068643339227897977>",
-            "hit" : "<:hit:1068643341757055006>>",
+            "hit" : "<:hit:1068643341757055006>",
             "res" : "<:res:1068643357322117121>",
             "spd" : "<:spd:1068643359448637552>",
             "map1" : "<:map1:1068643343418015905>",
@@ -76,7 +76,7 @@ class FeeCoop(interactions.Extension):
                         "turns" : [
                                 {
                                     "user" : str(745642457101893643),
-                                    "server" : str(563903641631719429),
+                                    "server" : str(737637662764171375),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
@@ -94,8 +94,8 @@ class FeeCoop(interactions.Extension):
                         "status" : "failure",
                         "turns" : [
                                 {
-                                    "user" : str(737637662764171375),
-                                    "server" : str(616101886290034778),
+                                    "user" : str(307624030704238592),
+                                    "server" : str(563903641631719429),
                                     "timestamp" : datetime.datetime.utcnow().isoformat(),
                                 },
                                 {
