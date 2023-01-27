@@ -53,12 +53,12 @@ class FeeCoop(interactions.Extension):
         Games = Query()
         results = self.db.search(Games.code == "666NB4R")
         logging.info(str(results[0]["turns"][0]["user"]))
-        user = await interactions.get(self.bot, interactions.User, results[0]["turns"][0]["user"])
-        guild ="y" # await interactions.get(self.bot, interactions.Guild, results[0]["turns"][0]["server"])
+        user = await interactions.get(self.bot, interactions.User, object_id=results[0]["turns"][0]["user"])
+        guild = await interactions.get(self.bot, interactions.Guild, object_id=results[0]["turns"][0]["server"])
 
 
         messagetext = ctx.target.content
-        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results) + " User is "+ user + " and server is " + guild, ephemeral=True)
+        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results) + " User is "+ user.mention + " and server is " + guild.name, ephemeral=True)
         
 
 def setup(client):
