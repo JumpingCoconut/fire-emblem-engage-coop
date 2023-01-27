@@ -18,6 +18,6 @@ feecoop = bot.get_extension("FeeCoop")
 @bot.event
 async def on_start():
     print("Discord bot is running!")
-    await feecoop.read_soundfiles()
+    #await feecoop.read_soundfiles()
 
 bot.start()
