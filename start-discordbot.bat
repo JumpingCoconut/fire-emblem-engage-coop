@@ -8,5 +8,5 @@ echo .
 dir static 
 echo .
 echo .
-start /B cmd /C ".\venv\Scripts\activate.bat && python discordbot_base.py"
+start /B cmd /C ".\venv\Scripts\activate.bat && python discord_fee_base.py"
 pause

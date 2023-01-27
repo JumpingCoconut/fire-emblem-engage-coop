@@ -4,4 +4,4 @@
 cd "${0%/*}"
 . venv/bin/activate
 
-python discordbot_base.py
+python discord_fee_base.py
