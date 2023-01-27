@@ -9,3 +9,6 @@ python -m pip install --upgrade pip
 
 # rem Install requirements
 python -m pip install -r requirements.txt
+
+# Make sure nobody accidentally commits their discord key
+git update-index --assume-unchanged .env
