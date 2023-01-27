@@ -188,9 +188,9 @@ class FeeCoop(interactions.Extension):
         if server_only or group_pass:
             # Group pass beats server ID
             if group_pass:
-                embed.set_footer(interactions.EmbedFooter(text="Group pass: " + group_pass))
+                embed.set_footer(text="Group pass: " + group_pass)
             elif server_only and started_serverid:
-                embed.set_footer(interactions.EmbedFooter(text="Only for server: " + started_serverobj.name))
+                embed.set_footer(text="Only for server: " + started_serverobj.name, icon_url=started_serverobj.icon_url)
 
         if created_on:
             embed.timestamp=datetime.datetime.fromisoformat(created_on)
