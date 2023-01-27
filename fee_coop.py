@@ -52,8 +52,8 @@ class FeeCoop(interactions.Extension):
         # Now search an entry
         Games = Query()
         results = self.db.search(Games.code == "666NB4R")
-        user = await interactions.get(self.bot, interactions.User, results["turns"][0]["user"])
-        guild = await interactions.get(self.bot, interactions.Guild, results["turns"][0]["server"])
+        user = await interactions.get(self.bot, interactions.User, results[0]["turns"][0]["user"])
+        guild = await interactions.get(self.bot, interactions.Guild, results[0]["turns"][0]["server"])
 
 
         messagetext = ctx.target.content
