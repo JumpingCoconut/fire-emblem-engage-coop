@@ -133,7 +133,7 @@ class FeeCoop(interactions.Extension):
         logging.info("FeeCoop loaded!")
 
     # Makes one embed for each given game ID
-    async def build_embed_for_game(self, doc_id, ctx):
+    async def build_embed_for_game(self, ctx, doc_id):
         entry = self.db.get(doc_id=doc_id)
         code = entry["code"]
         map = entry.get("map")
@@ -182,7 +182,7 @@ class FeeCoop(interactions.Extension):
                     rewardemoji = self.emoji[reward.lower().split()[0]]
                 except:
                     rewardemoji = ""
-                    embed.description += "\n" + rewardemoji + " " + reward
+                embed.description += "\n" + rewardemoji + " " + reward
 
         if server_only or group_pass:
             # Group pass beats server ID
@@ -229,7 +229,7 @@ class FeeCoop(interactions.Extension):
         if len(results) > 0:
             found_games = []
             for result in results:
-                embed = await self.build_embed_for_game(result.doc_id)
+                embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
                 found_games.append(embed)
             return await ctx.send(embeds=found_games, ephemeral=True)
         else:
