@@ -7,7 +7,6 @@ import aiohttp
 import interactions
 from interactions import Button, SelectMenu, SelectOption, spread_to_rows, autodefer
 import os
-import datetime
 from dotenv import dotenv_values
 from helpers import *
 
