@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import sys
 import json
 import chardet
 import aiohttp
