@@ -36,16 +36,14 @@ class FeeCoop(interactions.Extension):
     )
     async def fee_coop_rightclick_show_game(self, ctx):
         # Insert one test game
-        user = await interactions.get(self.bot, interactions.User, object_id=ctx.user.id)
-        guild = await interactions.get(self.bot, interactions.Guild, object_id=ctx.guild_id)
         new_item = {    "code": "666NB4R", 
                         "map": "Mountains", 
                         "server_only" : False,
                         "group_pass" : "", 
                         "turns" : [
                                 {
-                                    "user" : user,
-                                    "server" : guild,
+                                    "user" : ctx.user.id,
+                                    "server" : ctx.guild_id,
                                     "timestamp" : datetime.datetime.utcnow(),
                                 },
                             ],
@@ -54,9 +52,12 @@ class FeeCoop(interactions.Extension):
         # Now search an entry
         Games = Query()
         results = self.db.search(Games.code == "666NB4R")
+        user = await interactions.get(self.bot, interactions.User, results["turns"][0]["user"])
+        guild = await interactions.get(self.bot, interactions.Guild, results["turns"][0]["server"])
+
 
         messagetext = ctx.target.content
-        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results), ephemeral=True)
+        return await ctx.send("Messagetext is: " + messagetext + " , Database is : " + str(results) + " User is "+ user + " and server is " + guild, ephemeral=True)
         
 
 def setup(client):
