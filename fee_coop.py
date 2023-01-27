@@ -53,83 +53,83 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
-        # Test data
-        new_item = {    "code": "666NB4R", 
-                        "map": 3, 
-                        "server_only" : False,
-                        "group_pass" : "", 
-                        "status" : "fail",
-                        "turns" : [
-                                {
-                                    "user" : "330955309763788800", # str(ctx.user.id),
-                                    "server" : "490564578128822293", #str(ctx.guild_id),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                            ],
-                    }
-        self.db.insert(new_item) 
-        new_item = {    "code": "638P526", 
-                        "map": 4, 
-                        "server_only" : True,
-                        "group_pass" : "", 
-                        "status" : "open",
-                        "turns" : [
-                                {
-                                    "user" : str(523211690213376005),
-                                    "server" : str(870019135646613524),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(330955309763788800),
-                                    "server" : str(490564578128822293),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                            ],
-                    }
-        self.db.insert(new_item) 
-        new_item = {    "code": "8CL6W96", 
-                        "map": 5, 
-                        "server_only" : False,
-                        "group_pass" : "11118888", 
-                        "status" : "success",
-                        "turns" : [
-                                {
-                                    "user" : str(234861064532131842),
-                                    "server" : str(870019135646613524),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(330955309763788800),
-                                    "server" : str(870019135646613524),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(523211690213376005),
-                                    "server" : str(490564578128822293),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(363144319739232257),
-                                    "server" : str(870019135646613524),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                                {
-                                    "user" : str(307624030704238592),
-                                    "server" : str(490564578128822293),
-                                    "timestamp" : datetime.datetime.utcnow().isoformat(),
-                                },
-                            ],
-                    }
-        self.db.insert(new_item) 
-        # Now search an entry
-        # Games = Query()
-        # results = self.db.search(Games.code == "666NB4R")
-        # logging.info(str(results[0]["turns"][0]["user"]))
-        # user = await interactions.get(self.bot, interactions.User, object_id=results[0]["turns"][0]["user"])
-        # guild = await interactions.get(self.bot, interactions.Guild, object_id=results[0]["turns"][0]["server"])
+        make_testdata = True
+        if make_testdata:
+            # Test data
+            new_item = {    "code": "666NB4R", 
+                            "map": 3, 
+                            "server_only" : False,
+                            "group_pass" : "", 
+                            "status" : "fail",
+                            "turns" : [
+                                    {
+                                        "user" : "330955309763788800", # str(ctx.user.id),
+                                        "server" : "490564578128822293", #str(ctx.guild_id),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
+            new_item = {    "code": "638P526", 
+                            "map": 4, 
+                            "server_only" : True,
+                            "group_pass" : "", 
+                            "status" : "open",
+                            "turns" : [
+                                    {
+                                        "user" : str(523211690213376005),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(330955309763788800),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
+            new_item = {    "code": "8CL6W96", 
+                            "map": 5, 
+                            "server_only" : False,
+                            "group_pass" : "11118888", 
+                            "status" : "success",
+                            "turns" : [
+                                    {
+                                        "user" : str(234861064532131842),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(330955309763788800),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(523211690213376005),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(363144319739232257),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(307624030704238592),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
+            # Now search an entry
+            # Games = Query()
+            # results = self.db.search(Games.code == "666NB4R")
+            # logging.info(str(results[0]["turns"][0]["user"]))
+            # user = await interactions.get(self.bot, interactions.User, object_id=results[0]["turns"][0]["user"])
+            # guild = await interactions.get(self.bot, interactions.Guild, object_id=results[0]["turns"][0]["server"])
         
-
-
         logging.info("FeeCoop loaded!")
 
     # Makes one embed for each given game ID
@@ -155,7 +155,7 @@ class FeeCoop(interactions.Extension):
         if status:
             title += " (" + status + ")"
 
-        embed = interactions.Embed(title=code, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+        embed = interactions.Embed(title=status, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
 
         # Check the map data
         try:
@@ -173,7 +173,7 @@ class FeeCoop(interactions.Extension):
                 mapemoji = self.emoji["map" + str(map)]
             except:
                 mapemoji = ""
-            embed.description = "Map:" + mapname + " " + mapemoji + " (" + difficulty + ")"
+            embed.description = mapemoji + " " + mapname + "(" + difficulty + ")"
             # Second line: Turns
             embed.description += "\nTurns: " + str(maxturns) + " (" + str(maxplayers) + " players)"
             # Remaining lines: Rewards
@@ -199,7 +199,7 @@ class FeeCoop(interactions.Extension):
             username = started_userobj.username + "#" + started_userobj.discriminator
             if started_serverid != str(ctx.guild_id):
                 username += " (server " + started_serverobj.name + ")"
-            embed.set_author(name=started_userobj.username + "#" + started_userobj.discriminator, icon_url=started_userobj.avatar_url)
+            embed.set_author(name=username, icon_url=started_userobj.avatar_url)
 
         if len(turns) > 1:
             for turn in turns[1:]:
