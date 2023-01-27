@@ -234,7 +234,7 @@ class FeeCoop(interactions.Extension):
                 embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
                 found_games.append(embed)
                 embed_counter += 1
-            while(embed_counter < 25):
+            while(embed_counter < 10):
                 found_games.append(embed)
                 embed_counter += 1
             return await ctx.send(embeds=found_games, ephemeral=True)
