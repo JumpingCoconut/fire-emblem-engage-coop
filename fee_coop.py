@@ -240,6 +240,11 @@ class FeeCoop(interactions.Extension):
                                             )
             logging.info("Game added " + description)
 
+            # Max length
+            if len(description) >= 4096:
+                description = description[0:4096]
+                break
+
         embed.description = description
         
         # Select menu to show one game in detail
