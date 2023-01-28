@@ -220,13 +220,18 @@ class FeeCoop(interactions.Extension):
                 username += " (server " + started_serverobj.name + ")"
             description += "*by user " + username + ", " + timestamp_discordstring + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players*\n\n"
 
-            # Now prepare the select menu
-            options.append(SelectOption(label=code, 
-                                            value=entry.doc_id, 
-                                            description=str(mapname + "by " + username)[:100],
-                                            emoji=mapemoji
+            # Now prepare the select menu. For this we need the emoji as emoji object, not as string
+            if len(options < 25):
+                start = mapemoji.find(":", mapemoji.find(":") + 1) + 1
+                end = mapemoji.find(">")
+                emoji_id = mapemoji[start:end]
+                emoji = interactions.Emoji(id=emoji_id)
+                options.append(SelectOption(label=code, 
+                                                value=entry.doc_id, 
+                                                description=str(mapname + "by " + username)[:100],
+                                                emoji=emoji
+                                                )
                                             )
-                                        )
 
         embed.description = description
         
