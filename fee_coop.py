@@ -924,13 +924,6 @@ class FeeCoop(interactions.Extension):
         files = None
         if new_status == "success" or new_status == "finished":
             final_picture_path, final_picture_name = await self.get_finished_picture(status=new_status)
-            f = open(final_picture_path, mode='rb')
-            fxy = interactions.File(
-                filename=final_picture_name,
-                fp=f,
-                description=str("Fee coop file")
-                )
-            files = [fxy]
             embed.set_image(url="attachment://" + final_picture_name)
         
             # If the game is finished, send a message to everyone involved except for the last user    
@@ -939,10 +932,23 @@ class FeeCoop(interactions.Extension):
                 userid = turn["user"]
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
                 userobj._client = self.client._http
+                f = open(final_picture_path, mode='rb')
+                fxy = interactions.File(
+                    filename=final_picture_name,
+                    fp=f,
+                    description=str("Fee coop file")
+                    )
+                files = [fxy]
                 await userobj.send(embeds=[embed], files=files)
-                # The interaction library ruins our file pointers after every send, restore them
-                for file in files:
-                    file._fp.seek(0)
+                
+            # We have to provide the file again and again for every single send
+            f = open(final_picture_path, mode='rb')
+            fxy = interactions.File(
+                filename=final_picture_name,
+                fp=f,
+                description=str("Fee coop file")
+                )
+            files = [fxy]
 
         # Update message in the current channel for the updating user
         return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
