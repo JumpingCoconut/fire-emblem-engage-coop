@@ -26,29 +26,14 @@ debug_mode=bool(config['DEBUG_MODE'] == "True")
 class FeeCoop(interactions.Extension):
     def __init__(self, client):
         self.bot: interactions.Client = client
-        # All information about our maps just in code
-        self.mapdata = [ 
-            None, 
-            {"name": "Verdant Plain", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Res Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
-            {"name": "Floral Field", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Def Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
-            {"name": "Mountain Peak", "difficulty": "Normal", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Dex Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
-            {"name": "Winter Forest", "difficulty": "Hard", "maxturns": 2, "maxplayers": 5, "possible_rewards": ["Spd Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
-            {"name": "Desert Dunes", "difficulty": "Hard", "maxturns": 3, "maxplayers": 5, "possible_rewards": ["Crit Crystal", "Hit Crystal", "Avo Crystal", "Ddg Crystal"]},
-        ]
-        self.emoji = {
-            "avo" : "<:avo:1068643333716586637>", 
-            "crit" : "<:crit:1068643336178630796>",
-            "ddg" : "<:ddg:1068643337550180403>",
-            "dex" : "<:dex:1068643339227897977>",
-            "hit" : "<:hit:1068643341757055006>",
-            "res" : "<:res:1068643357322117121>",
-            "spd" : "<:spd:1068643359448637552>",
-            "map1" : "<:map1:1068700386753511534>",
-            "map2" : "<:map2:1068700389165240411>",
-            "map3" : "<:map3:1068700390641639554>",
-            "map4" : "<:map4:1068700391556005979>",
-            "map5" : "<:map5:1068700393938366565>",
-        }
+        # All information about our maps. Index = Map number
+        self.mapdata = []
+        with open("ressources/mapdata.json", "r") as json_file:
+            self.mapdata = json.load(json_file)
+        # Maps are also represented as emoji
+        self.emoji = {}
+        with open("ressources/emoji.json", "r") as json_file:
+            self.emoji = json.load(json_file)
 
         # Active games from database
         self.db = TinyDB('db.json')
@@ -56,6 +41,25 @@ class FeeCoop(interactions.Extension):
         add_testdata = False
         if add_testdata:
             # Test data
+            new_item = {    "code": "7999996", 
+                            "map": 2, 
+                            "server_only" : True,
+                            "group_pass" : "", 
+                            "status" : "open",
+                            "turns" : [
+                                    {
+                                        "user" : str(363144319739232257),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : "2022-12-24T16:59:00", #datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(523211690213376005),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
             new_item = {    "code": "663NB4R", 
                             "map": 1, 
                             "server_only" : False,
@@ -93,7 +97,7 @@ class FeeCoop(interactions.Extension):
                             "map": 3, 
                             "server_only" : False,
                             "group_pass" : "", 
-                            "status" : "open",
+                            "status" : "success",
                             "turns" : [
                                     {
                                         "user" : str(234861064532131842),
@@ -123,6 +127,73 @@ class FeeCoop(interactions.Extension):
                                 ],
                         }
             self.db.insert(new_item) 
+            new_item = {    "code": "8896W96", 
+                            "map": 4, 
+                            "server_only" : False,
+                            "group_pass" : "", 
+                            "status" : "finished",
+                            "turns" : [
+                                    {
+                                        "user" : str(234861064532131842),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(330955309763788800),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(523211690213376005),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
+            new_item = {    "code": "9999526", 
+                            "map": 5, 
+                            "server_only" : False,
+                            "group_pass" : "11118888", 
+                            "status" : "open",
+                            "turns" : [
+                                    {
+                                        "user" : str(330955309763788800),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(234861064532131842),
+                                        "server" : str(490564578128822293),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(363144319739232257),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
+            new_item = {    "code": "123526", 
+                            "map": 5, 
+                            "server_only" : True,
+                            "group_pass" : "", 
+                            "status" : "open",
+                            "turns" : [
+                                    {
+                                        "user" : str(234861064532131842),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                    {
+                                        "user" : str(307624030704238592),
+                                        "server" : str(870019135646613524),
+                                        "timestamp" : datetime.datetime.utcnow().isoformat(),
+                                    },
+                                ],
+                        }
+            self.db.insert(new_item) 
             # Now search an entry
             # Games = Query()
             # results = self.db.search(Games.code == "666NB4R")
@@ -132,28 +203,52 @@ class FeeCoop(interactions.Extension):
         
         logging.info("FeeCoop loaded!")
 
+    # Checks an embed for a game id
+    async def get_doc_id_from_message(self, ctx, status="open"):
+        if not ctx.message.embeds:
+            return None
+        code = ctx.message.embeds[0].title.split()[0]
+        game_search_fragment = {"code" : code, "status" : status}
+        GamesQ = Query()
+        games = self.db.search(GamesQ.fragment(game_search_fragment))
+        if (not games) or len(games) == 0:
+            return None
+        else:
+            # We *should* have only one open game with the same game code
+            return games[0].doc_id
+
     # Lists all games with given criteria
     async def show_game_list(self, ctx, server_only=None, group_pass=None, status="open", for_user=None, ephemeral=False):
+        if group_pass:
+            ephemeral = True
         await ctx.defer(ephemeral=ephemeral)
 
         color = assign_color_to_user(ctx.user.username)
-        title = "Fire Emblem Engage: Relay trials"
-        embed = interactions.Embed(title=title, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+        title = "Fire Emblem Engage: Relay Trials"
+        embed = interactions.Embed( title=title, 
+                                    color=color, 
+                                    provider=interactions.EmbedProvider(name="Fee coop"),
+                                    timestamp=datetime.datetime.utcnow())
 
         if server_only:
             server_id = ctx.guild_id
             serverobj = await interactions.get(self.bot, interactions.Guild, object_id=server_id)
-            logging.info("Server pic: " + str(serverobj.icon_url))
             embed.set_author(name="Only listing server: " + serverobj.name, icon_url=serverobj.icon_url)
         elif group_pass:
-            embed.set_author(name="All games from all servers with group pass: " + group_pass)
+            embed.set_author(name="Open games from all servers with group pass: " + group_pass)
+        elif for_user:
+            embed.set_author(name="Games of " + ctx.user.username + "#" + ctx.user.discriminator, icon_url=ctx.user.avatar_url)
 
         # Prepare a simple search for these criteria
         game_search_fragment = {}
-        if group_pass:
-            game_search_fragment["group_pass"] = group_pass
         if status:
             game_search_fragment["status"] = status
+        if group_pass:
+            game_search_fragment["group_pass"] = group_pass
+        else:
+            # These games explicitly do not want to be listed
+            if not for_user:
+                game_search_fragment["group_pass"] = ""
 
         # Do we have any subcriteria where we need to check the individual turns?
         GamesQ = Query()
@@ -201,6 +296,8 @@ class FeeCoop(interactions.Extension):
             if not status:
                 # If no status was selected, show the current games status
                 code += " (" + entry.get("status") + ")"
+            if for_user and entry.get("group_pass"):
+                code += " (group pass locked)"
 
             map = entry.get("map")
             difficulty = self.mapdata[map]["difficulty"]
@@ -214,17 +311,18 @@ class FeeCoop(interactions.Extension):
 
             # Second line: User, timestamp and turn count
             created_on = turns[0]["timestamp"]
+            last_activity = turns[len(turns) - 1]["timestamp"]
             started_userid = turns[0]["user"]
             started_serverid = turns[0]["server"]
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
-            timestamp = datetime.datetime.fromisoformat(created_on)
+            timestamp = datetime.datetime.fromisoformat(last_activity)
             utc_time = calendar.timegm(timestamp.utctimetuple())
-            timestamp_discordstring = "<t:" + str(utc_time) + ":R>"
+            last_activity_discordstring = "<t:" + str(utc_time) + ":R>"
             username = started_userobj.username + "#" + started_userobj.discriminator
             if started_serverid != str(ctx.guild_id):
                 username += " (server " + started_serverobj.name + ")"
-            description += "*by user " + username + ", " + timestamp_discordstring + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players*\n\n"
+            description += "*by user " + username + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players, " + last_activity_discordstring + "*\n\n"
 
             # Now prepare the select menu. For this we need the emoji as emoji object, not as string
             if len(options) < 25:
@@ -238,7 +336,7 @@ class FeeCoop(interactions.Extension):
                                                 emoji=emoji
                                                 )
                                             )
-            logging.info("Game added " + description)
+            logging.info("Game added " + code)
 
             # Max length
             if len(description) >= 4096:
@@ -258,6 +356,81 @@ class FeeCoop(interactions.Extension):
             components = [[s1]]
         logging.info("Sending reply")
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
+
+    # Can the user delete this game?
+    async def can_user_delete_game(self, ctx, doc_id):
+        entry = self.db.get(doc_id=doc_id)
+        status = entry.get("status")
+        if status != "open":
+            return False
+        
+        # When was the game touched the last time?
+        turns = entry.get("turns", [])
+        last_activity = turns[-1]["timestamp"]
+        timestamp = datetime.datetime.fromisoformat(last_activity)
+        days_since_last_activity = (datetime.datetime.now() - timestamp).days
+
+        # User owner or participant?
+        user_is_participant = False
+        user_is_host = False
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            user_is_participant = True
+            if (str(ctx.user.id) == turns[0]['user']):
+                user_is_host = True
+
+        # Allow to abandon the game? Host can abandon always, participants after one day
+        if user_is_host or (user_is_participant and days_since_last_activity > 1):
+            return True
+        elif days_since_last_activity > 2:
+            # Everyone can abandon the game if its very old
+            return True
+        
+        return False
+
+
+    # Determines which buttons the user can see and returns them
+    async def build_components_for_game(self, ctx, doc_id):
+        components = None
+        # Join - If the game is open and user didnt join already. Opens new modal with finished, lost and couldnt join
+        # Abandon - If user is part of the group and game is old
+
+        entry = self.db.get(doc_id=doc_id)
+        status = entry.get("status")
+        if status != "open":
+            return components
+        
+        # Old games can be deleted
+        delete_game_allowed = await self.can_user_delete_game(ctx=ctx, doc_id=doc_id)
+
+        # Joining is only allowed if user is not in the game already
+        user_is_participant = False
+        turns = entry.get("turns", [])
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            user_is_participant = True
+        
+        button_join = None
+        button_abandon = None
+        
+        # Join game if didnt already
+        if not user_is_participant:
+            button_join = Button(style=3, custom_id="join_game", label="Join", emoji=interactions.Emoji(name="⚔️"))
+
+        # Allow to abandon the game? Host can abandon always, participants after one day
+        if delete_game_allowed:
+            if user_is_participant:
+                button_abandon = Button(style=4, custom_id="abandon_game", label="Remove from open game list", emoji=interactions.Emoji(name="🇽"))
+            else:
+                button_abandon = Button(style=4, custom_id="abandon_game", label="Abandoned? Remove for EVERYONE", emoji=interactions.Emoji(name="⚠️"))
+
+        # Arrange buttons for discord neatly
+        if button_join and button_abandon:
+            components = spread_to_rows(button_join, button_abandon)
+        elif button_join:
+            components = [[button_join]]
+        elif button_abandon:
+            components = [[button_abandon]]
+        
+        return components
 
     # Makes one embed for each given game ID
     async def build_embed_for_game(self, ctx, doc_id):
@@ -408,16 +581,96 @@ class FeeCoop(interactions.Extension):
             status = None
         return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
 
+   # Join the game
+    @interactions.extension_component("join_game")
+    async def fee_join_game(self, ctx):
+        # Get the open game from the last message
+        doc_id = await self.get_doc_id_from_message(ctx, status="open")
+
+        # Last messgae hidden or not?
+        # if ctx.message.flags == 64:
+        #     ephemeral = True
+        # else:
+        #     ephemeral = False
+        ephemeral = True
+
+        # Game found?
+        if not doc_id:
+            return await ctx.send("Could not join game, maybe it was finished already?", ephemeral=True)
+
+        # Ask the user if it worked or not
+        entry = self.db.get(doc_id=doc_id)
+        code = entry["code"]
+        server_only = entry.get("server_only")
+        group_pass = entry.get("group_pass")
+        turns = entry.get("turns", [])
+        if len(turns) > 0:
+            started_userid = turns[0]["user"]
+            started_serverid = turns[0]["server"]
+            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+            started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+            color = assign_color_to_user(started_userobj.username)
+
+        title = code
+        color = assign_color_to_user(ctx.user.username)
+        description = "Join the game using the above code in Fire Emblem Engage: Relay Trials now!"
+        if server_only:
+            description += "\nPlease note that the game opener only wants users from the server " + started_serverobj.name + " to join."
+        if group_pass:
+            description += "\nPlease note that the game opener only wants users with a group pass to join."
+        description += "\n\nOnce you finished your turns, please use the buttons below to update the game status."
+
+        embed = interactions.Embed(title=title, color=color, description=description, provider=interactions.EmbedProvider(name="Fee coop"))
+
+        username = started_userobj.username + "#" + started_userobj.discriminator
+        if started_serverid != str(ctx.guild_id):
+            username += " (server " + started_serverobj.name + ")"
+        embed.set_author(name=username, icon_url=started_userobj.avatar_url)
+
+        # Make the buttons
+        b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700))
+        b2 = Button(style=1, custom_id="game_success", label="Success! Tell everyone!", emoji=interactions.Emoji(id=1068852878661398548))
+        b3 = Button(style=2, custom_id="game_over", label="Game Over (quiet notice)", emoji=interactions.Emoji(id=1068852433129832558))
+        b4 = Button(style=4, custom_id="join_game_failed", label="Could not join game", emoji=interactions.Emoji(id=1068863333526151230))
+        components = spread_to_rows(b1, b2, b3, b4)
+
+        return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
+
+
+   # Abandon the game
+    @interactions.extension_component("abandon_game")
+    async def fee_abandon_game(self, ctx):
+        # Get the open game from the last message
+        doc_id = await self.get_doc_id_from_message(ctx, status="open")
+
+        # Game found?
+        if not doc_id:
+            return await ctx.send("Could not find open game, maybe it was finished meanwhile?", ephemeral=True)
+
+        # Game deletion allowed?
+        delete_game_allowed = await self.can_user_delete_game(ctx=ctx, doc_id=doc_id)
+        if not delete_game_allowed:
+            return await ctx.send("Not allowed to remove the game! The players have a few days to finish this. If no activity is found after a few days, you can try deleting it again.", ephemeral=True)
+
+        # Todo: Update game status
+
+
+        # ToDo: Send message to everyone involved.
+        return await ctx.send("Game abandoned. Every participant was informed that you removed the game.", ephemeral=True)
+
     # Select menu processing
     @interactions.extension_component("show_game_docid")
     async def show_game_docid(self, ctx, value):
         # User didnt select a speaker. Send a message and delete it so discords knows we "processed" it.
         doc_id = value[0]
-        embed = await self.build_embed_for_game(doc_id=doc_id, ctx=ctx)
-        ephemeral = True
-        if ctx.message:
+        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+        components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+        # Discord sets the flag 64 on ephemeral messages
+        if ctx.message.flags == 64:
+            ephemeral = True
+        else:
             ephemeral = False
-        return await ctx.send(embeds=[embed], ephemeral=ephemeral)
+        return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
@@ -431,14 +684,51 @@ class FeeCoop(interactions.Extension):
         if len(results) > 0:
             found_games = []
             embed_counter = 0
+            options = []
+            components = None
             for result in results:
                 embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
                 found_games.append(embed)
-                embed_counter += 1
+                if len(results) == 1:
+                    # Just one game? Allow to join immediatly
+                    components = await self.build_components_for_game(ctx=ctx, doc_id=result.doc_id)
+                else:
+                    # Multiple games? Then build a select menu for joining one
+                    map = result.get("map")
+                    mapname = self.mapdata[map]["name"]
+                    mapemoji = self.emoji["map" + str(map)]
+                    start = mapemoji.find(":", mapemoji.find(":") + 1) + 1
+                    end = mapemoji.find(">")
+                    emoji_id = mapemoji[start:end]
+                    emoji = interactions.Emoji(id=emoji_id)
+                    turns = result["turns"]
+                    started_userid = turns[0]["user"]
+                    started_serverid = turns[0]["server"]
+                    started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+                    started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+                    username = started_userobj.username + "#" + started_userobj.discriminator
+                    if started_serverid != str(ctx.guild_id):
+                        username += " (server " + started_serverobj.name + ")"
+
+                    options.append(SelectOption(label=result.get("code"), 
+                                                    value=result.doc_id, 
+                                                    description=str(mapname + "by " + username)[:100],
+                                                    emoji=emoji
+                                                    )
+                                                )
                 # Max amount of discord embeds
+                embed_counter += 1
                 if embed_counter >= 10:
                     break
-            return await ctx.send(embeds=found_games, ephemeral=True)
+            # Dont forget the select menu
+            if len(results) > 1:
+                s1 = SelectMenu(
+                                    custom_id="show_game_docid",
+                                    placeholder="Select game",
+                                    options=options,
+                                )
+                components = [[s1]]
+            return await ctx.send(embeds=found_games, components=components, ephemeral=True)
         else:
             return await ctx.send("No valid codes found in this message.", ephemeral=True)
 

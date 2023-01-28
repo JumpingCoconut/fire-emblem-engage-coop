@@ -1,0 +1,63 @@
+[
+    null,
+    {
+        "name": "Verdant Plain",
+        "difficulty": "Normal",
+        "maxturns": 2,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Res Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
+    },
+    {
+        "name": "Floral Field",
+        "difficulty": "Normal",
+        "maxturns": 2,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Def Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
+    },
+    {
+        "name": "Mountain Peak",
+        "difficulty": "Normal",
+        "maxturns": 2,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Dex Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
+    },
+    {
+        "name": "Winter Forest",
+        "difficulty": "Hard",
+        "maxturns": 2,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Spd Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
+    },
+    {
+        "name": "Desert Dunes",
+        "difficulty": "Hard",
+        "maxturns": 3,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Crit Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
+    }
+]

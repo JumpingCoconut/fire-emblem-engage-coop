@@ -1,0 +1,1018 @@
+01/28/2023 09:31:29 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:31:29 AM INFO FeeCoop loaded!
+01/28/2023 09:31:30 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:31:30 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:31:30 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:33:04 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:33:09 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:33:09 AM ERROR Could not load fee_coop: dump() missing 1 required positional argument: 'fp'. Skipping.
+01/28/2023 09:33:58 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:33:58 AM INFO FeeCoop loaded!
+01/28/2023 09:33:58 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:33:59 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:33:59 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:39:49 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:39:49 AM ERROR Could not load fee_coop: not readable. Skipping.
+01/28/2023 09:40:05 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:40:05 AM ERROR Could not load fee_coop: Expecting value: line 1 column 1 (char 0). Skipping.
+01/28/2023 09:40:06 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:40:06 AM ERROR Could not load fee_coop: Expecting value: line 1 column 1 (char 0). Skipping.
+01/28/2023 09:41:47 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:41:47 AM INFO FeeCoop loaded!
+01/28/2023 09:41:48 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:41:48 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:41:48 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:42:40 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:42:40 AM INFO FeeCoop loaded!
+01/28/2023 09:42:40 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:42:41 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:42:41 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:43:27 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:43:27 AM INFO FeeCoop loaded!
+01/28/2023 09:43:28 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:43:28 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:43:28 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:43:38 AM ERROR Task exception was never retrieved
+future: <Task finished name='Task-22' coro=<FeeCoop.fee_coop_rightclick_show_game() done, defined at D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py:930> exception=IndexError('list index out of range')>
+Traceback (most recent call last):
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 970, in wrapper
+    raise e
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 938, in wrapper
+    return await coro(self.extension, ctx, *args, **kwargs)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 420, in fee_coop_rightclick_show_game
+    embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 278, in build_embed_for_game
+    difficulty = self.mapdata[map]["difficulty"]
+IndexError: list index out of range
+01/28/2023 09:45:01 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:45:01 AM ERROR Could not load fee_coop: list index out of range. Skipping.
+01/28/2023 09:45:24 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:45:31 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:45:31 AM INFO FeeCoop loaded!
+01/28/2023 09:45:31 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:45:32 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:45:32 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:48:27 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:48:27 AM INFO FeeCoop loaded!
+01/28/2023 09:48:27 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:48:28 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:48:28 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:48:34 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 09:48:35 AM INFO Searching for {'status': 'open'}
+01/28/2023 09:48:35 AM INFO Len is 6
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Adding game
+01/28/2023 09:48:35 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+**9996W96** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895531:R>, 5/5 players*
+
+
+01/28/2023 09:48:35 AM INFO Sending reply
+01/28/2023 09:49:29 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 09:49:29 AM INFO Searching for current user and {}
+01/28/2023 09:49:29 AM INFO Len is 6
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Adding game
+01/28/2023 09:49:29 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895531:R>, 5/5 players*
+
+
+01/28/2023 09:49:29 AM INFO Sending reply
+01/28/2023 09:52:05 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 09:52:05 AM INFO Server pic: None
+01/28/2023 09:52:05 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 09:52:05 AM INFO Len is 4
+01/28/2023 09:52:05 AM INFO Adding game
+01/28/2023 09:52:05 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+
+01/28/2023 09:52:05 AM INFO Adding game
+01/28/2023 09:52:05 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+
+01/28/2023 09:52:05 AM INFO Adding game
+01/28/2023 09:52:05 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+
+01/28/2023 09:52:05 AM INFO Adding game
+01/28/2023 09:52:05 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+
+01/28/2023 09:52:05 AM INFO Sending reply
+01/28/2023 09:53:02 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 09:53:03 AM INFO Searching for current user and {}
+01/28/2023 09:53:03 AM INFO Len is 6
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Adding game
+01/28/2023 09:53:03 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895407:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895407:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895407:R>, 5/5 players*
+
+**663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, <t:1674895531:R>, 1/5 players*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, <t:1674895531:R>, 2/5 players*
+
+**9996W96 (open)** - <:map3:1068700390641639554> Mountain Peak(Normal)
+*by user Rose_Kazumi#9756 (server Zapdos), <t:1674895531:R>, 5/5 players*
+
+
+01/28/2023 09:53:03 AM INFO Sending reply
+01/28/2023 09:56:55 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 09:56:55 AM INFO FeeCoop loaded!
+01/28/2023 09:56:55 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 09:56:56 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:56:56 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 09:57:03 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 09:57:03 AM INFO Searching for {'status': 'open'}
+01/28/2023 09:57:03 AM INFO Len is 3
+01/28/2023 09:57:03 AM INFO Adding game
+01/28/2023 09:57:04 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:57:04 AM INFO Adding game
+01/28/2023 09:57:04 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:57:04 AM INFO Sending reply
+01/28/2023 09:57:24 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 09:57:24 AM INFO Server pic: None
+01/28/2023 09:57:24 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 09:57:24 AM INFO Len is 2
+01/28/2023 09:57:24 AM INFO Adding game
+01/28/2023 09:57:24 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:57:24 AM INFO Adding game
+01/28/2023 09:57:24 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:57:24 AM INFO Sending reply
+01/28/2023 09:58:59 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 09:58:59 AM INFO Server pic: None
+01/28/2023 09:58:59 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 09:58:59 AM INFO Len is 2
+01/28/2023 09:58:59 AM INFO Adding game
+01/28/2023 09:58:59 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:58:59 AM INFO Adding game
+01/28/2023 09:58:59 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 09:58:59 AM INFO Sending reply
+01/28/2023 10:00:47 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:00:47 AM INFO FeeCoop loaded!
+01/28/2023 10:00:47 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:00:48 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:00:48 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:00:53 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:00:53 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:00:53 AM INFO Len is 3
+01/28/2023 10:00:53 AM INFO Adding game
+01/28/2023 10:00:53 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:00:53 AM INFO Adding game
+01/28/2023 10:00:53 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:00:53 AM INFO Sending reply
+01/28/2023 10:00:56 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:00:57 AM INFO Server pic: NoneNone
+01/28/2023 10:00:57 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 10:00:57 AM INFO Len is 2
+01/28/2023 10:00:57 AM INFO Adding game
+01/28/2023 10:00:57 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:00:57 AM INFO Adding game
+01/28/2023 10:00:57 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:00:57 AM INFO Sending reply
+01/28/2023 10:01:32 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:01:32 AM INFO FeeCoop loaded!
+01/28/2023 10:01:32 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:01:33 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:01:33 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:01:56 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:01:57 AM INFO Server pic: None{'id': '490564578128822293', 'name': 'JCoconut', 'icon': None, 'owner': False, 'permissions': '1071698673217', 'features': ['APPLICATION_COMMAND_PERMISSIONS_V2']}
+01/28/2023 10:01:57 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 10:01:57 AM INFO Len is 2
+01/28/2023 10:01:57 AM INFO Adding game
+01/28/2023 10:01:57 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:01:57 AM INFO Adding game
+01/28/2023 10:01:57 AM INFO Game added **663NB4R** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:01:57 AM INFO Sending reply
+01/28/2023 10:02:32 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:02:33 AM INFO Searching for current user and {}
+01/28/2023 10:02:33 AM INFO Len is 2
+01/28/2023 10:02:33 AM INFO Adding game
+01/28/2023 10:02:33 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:02:33 AM INFO Adding game
+01/28/2023 10:02:33 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:02:33 AM INFO Sending reply
+01/28/2023 10:03:07 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:03:07 AM INFO Server pic: https://cdn.discordapp.com/icons/870019135646613524/824a417f39417704bc8393152b80a872.png{'id': '870019135646613524', 'name': 'Zapdos', 'icon': '824a417f39417704bc8393152b80a872', 'owner': False, 'permissions': '1071698669121', 'features': ['APPLICATION_COMMAND_PERMISSIONS_V2']}
+01/28/2023 10:03:07 AM INFO Searching for current server and {'status': 'open'}
+01/28/2023 10:03:07 AM INFO Len is 1
+01/28/2023 10:03:07 AM INFO Adding game
+01/28/2023 10:03:08 AM INFO Game added **123526** - <:map5:1068700393938366565> Desert Dunes(Hard)
+*by user Rose_Kazumi#9756, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:03:08 AM INFO Sending reply
+01/28/2023 10:03:42 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:03:43 AM INFO Searching for current user and {}
+01/28/2023 10:03:43 AM INFO Len is 2
+01/28/2023 10:03:43 AM INFO Adding game
+01/28/2023 10:03:43 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:03:43 AM INFO Adding game
+01/28/2023 10:03:43 AM INFO Game added **663NB4R (open)** - <:map1:1068700386753511534> Verdant Plain(Normal)
+*by user JumpingCoconut#8515, 1/5 players, <t:1674896215:R>*
+
+**748P526 (open)** - <:map2:1068700389165240411> Floral Field(Normal)
+*by user Deejenerate#9244, 2/5 players, <t:1674896215:R>*
+
+
+01/28/2023 10:03:43 AM INFO Sending reply
+01/28/2023 10:07:39 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:07:39 AM INFO FeeCoop loaded!
+01/28/2023 10:07:39 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:07:39 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:07:39 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:07:43 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:07:43 AM INFO Searching for current user and {}
+01/28/2023 10:07:43 AM INFO Len is 2
+01/28/2023 10:07:43 AM INFO Adding game
+01/28/2023 10:07:43 AM INFO Game added 663NB4R (open)
+01/28/2023 10:07:43 AM INFO Adding game
+01/28/2023 10:07:43 AM INFO Game added 748P526 (open)
+01/28/2023 10:07:43 AM INFO Sending reply
+01/28/2023 10:08:01 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:08:01 AM INFO Searching for current user and {'status': 'open'}
+01/28/2023 10:08:01 AM INFO Len is 2
+01/28/2023 10:08:01 AM INFO Adding game
+01/28/2023 10:08:01 AM INFO Game added 663NB4R
+01/28/2023 10:08:01 AM INFO Adding game
+01/28/2023 10:08:01 AM INFO Game added 748P526
+01/28/2023 10:08:01 AM INFO Sending reply
+01/28/2023 10:08:57 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:08:58 AM INFO FeeCoop loaded!
+01/28/2023 10:08:58 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:08:58 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:08:58 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:09:46 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:09:46 AM INFO FeeCoop loaded!
+01/28/2023 10:09:47 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:09:47 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:09:47 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:09:54 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:09:54 AM INFO Searching for current user and {}
+01/28/2023 10:09:54 AM INFO Len is 0
+01/28/2023 10:09:54 AM INFO Sending reply
+01/28/2023 10:10:12 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:10:12 AM INFO FeeCoop loaded!
+01/28/2023 10:10:13 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:10:13 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:10:13 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:10:13 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 34.105 seconds.
+01/28/2023 10:10:28 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:10:28 AM INFO Searching for current user and {}
+01/28/2023 10:10:28 AM INFO Len is 5
+01/28/2023 10:10:28 AM INFO Adding game
+01/28/2023 10:10:28 AM INFO Game added 663NB4R (open)
+01/28/2023 10:10:28 AM INFO Adding game
+01/28/2023 10:10:28 AM INFO Game added 748P526 (open)
+01/28/2023 10:10:28 AM INFO Adding game
+01/28/2023 10:10:28 AM INFO Game added 9996W96 (finished)
+01/28/2023 10:10:28 AM INFO Adding game
+01/28/2023 10:10:28 AM INFO Game added 8896W96 (failure)
+01/28/2023 10:10:28 AM INFO Adding game
+01/28/2023 10:10:28 AM INFO Game added 9999526 (open)
+01/28/2023 10:10:28 AM INFO Sending reply
+01/28/2023 10:11:07 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:11:07 AM INFO Searching for current user and {'status': 'open'}
+01/28/2023 10:11:07 AM INFO Len is 3
+01/28/2023 10:11:07 AM INFO Adding game
+01/28/2023 10:11:07 AM INFO Game added 663NB4R
+01/28/2023 10:11:07 AM INFO Adding game
+01/28/2023 10:11:07 AM INFO Game added 748P526
+01/28/2023 10:11:07 AM INFO Adding game
+01/28/2023 10:11:07 AM INFO Game added 9999526
+01/28/2023 10:11:07 AM INFO Sending reply
+01/28/2023 10:11:30 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:11:30 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:11:30 AM INFO Len is 4
+01/28/2023 10:11:30 AM INFO Adding game
+01/28/2023 10:11:30 AM INFO Game added 663NB4R
+01/28/2023 10:11:30 AM INFO Adding game
+01/28/2023 10:11:30 AM INFO Game added 748P526
+01/28/2023 10:11:30 AM INFO Adding game
+01/28/2023 10:11:30 AM INFO Game added 9999526
+01/28/2023 10:11:30 AM INFO Sending reply
+01/28/2023 10:12:38 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:12:38 AM INFO FeeCoop loaded!
+01/28/2023 10:12:38 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:12:39 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:12:39 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:13:08 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:13:09 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:13:09 AM INFO Len is 4
+01/28/2023 10:13:09 AM INFO Adding game
+01/28/2023 10:13:09 AM INFO Game added 663NB4R
+01/28/2023 10:13:09 AM INFO Adding game
+01/28/2023 10:13:09 AM INFO Game added 748P526
+01/28/2023 10:13:09 AM INFO Adding game
+01/28/2023 10:13:09 AM INFO Game added 9999526
+01/28/2023 10:13:09 AM INFO Sending reply
+01/28/2023 10:15:24 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:15:25 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:15:25 AM INFO Len is 4
+01/28/2023 10:15:25 AM INFO Adding game
+01/28/2023 10:15:25 AM INFO Game added 663NB4R
+01/28/2023 10:15:25 AM INFO Adding game
+01/28/2023 10:15:25 AM INFO Game added 748P526
+01/28/2023 10:15:25 AM INFO Adding game
+01/28/2023 10:15:25 AM INFO Game added 9999526
+01/28/2023 10:15:25 AM INFO Sending reply
+01/28/2023 10:15:33 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:15:33 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:15:33 AM INFO Len is 4
+01/28/2023 10:15:33 AM INFO Adding game
+01/28/2023 10:15:33 AM INFO Game added 663NB4R
+01/28/2023 10:15:33 AM INFO Adding game
+01/28/2023 10:15:33 AM INFO Game added 748P526
+01/28/2023 10:15:33 AM INFO Adding game
+01/28/2023 10:15:33 AM INFO Game added 9999526
+01/28/2023 10:15:33 AM INFO Sending reply
+01/28/2023 10:25:14 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:25:14 AM INFO FeeCoop loaded!
+01/28/2023 10:25:14 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:25:14 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:25:14 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:25:53 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:25:53 AM INFO Searching for current user and {}
+01/28/2023 10:25:53 AM INFO Len is 5
+01/28/2023 10:25:53 AM INFO Adding game
+01/28/2023 10:25:53 AM INFO Game added 663NB4R (open)
+01/28/2023 10:25:53 AM INFO Adding game
+01/28/2023 10:25:53 AM INFO Game added 748P526 (open)
+01/28/2023 10:25:53 AM INFO Adding game
+01/28/2023 10:25:53 AM INFO Game added 9996W96 (finished)
+01/28/2023 10:25:53 AM INFO Adding game
+01/28/2023 10:25:53 AM INFO Game added 8896W96 (failure)
+01/28/2023 10:25:53 AM INFO Adding game
+01/28/2023 10:25:53 AM INFO Game added 9999526 (open)
+01/28/2023 10:25:53 AM INFO Sending reply
+01/28/2023 10:26:28 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:26:28 AM INFO Searching for {'group_pass': '11118888', 'status': 'open'}
+01/28/2023 10:26:28 AM INFO Len is 0
+01/28/2023 10:26:28 AM INFO Sending reply
+01/28/2023 10:26:42 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:26:42 AM INFO Searching for {'group_pass': '111188898', 'status': 'open'}
+01/28/2023 10:26:42 AM INFO Len is 1
+01/28/2023 10:26:42 AM INFO Adding game
+01/28/2023 10:26:42 AM INFO Game added 9999526
+01/28/2023 10:26:42 AM INFO Sending reply
+01/28/2023 10:26:47 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:26:47 AM INFO Searching for {'status': 'open'}
+01/28/2023 10:26:47 AM INFO Len is 4
+01/28/2023 10:26:47 AM INFO Adding game
+01/28/2023 10:26:47 AM INFO Game added 663NB4R
+01/28/2023 10:26:47 AM INFO Adding game
+01/28/2023 10:26:47 AM INFO Game added 748P526
+01/28/2023 10:26:47 AM INFO Adding game
+01/28/2023 10:26:47 AM INFO Game added 9999526
+01/28/2023 10:26:47 AM INFO Sending reply
+01/28/2023 10:30:25 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:30:25 AM INFO FeeCoop loaded!
+01/28/2023 10:30:26 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:30:26 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:30:26 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:30:36 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:30:36 AM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 10:30:36 AM INFO Len is 3
+01/28/2023 10:30:36 AM INFO Adding game
+01/28/2023 10:30:36 AM INFO Game added 663NB4R
+01/28/2023 10:30:36 AM INFO Adding game
+01/28/2023 10:30:37 AM INFO Game added 748P526
+01/28/2023 10:30:37 AM INFO Sending reply
+01/28/2023 10:31:03 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:31:03 AM INFO Searching for {'status': 'open', 'group_pass': '11118888'}
+01/28/2023 10:31:03 AM INFO Len is 1
+01/28/2023 10:31:03 AM INFO Adding game
+01/28/2023 10:31:03 AM INFO Game added 9999526
+01/28/2023 10:31:03 AM INFO Sending reply
+01/28/2023 10:31:11 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:31:11 AM INFO Searching for current user and {'group_pass': ''}
+01/28/2023 10:31:11 AM INFO Len is 4
+01/28/2023 10:31:11 AM INFO Adding game
+01/28/2023 10:31:11 AM INFO Game added 663NB4R (open)
+01/28/2023 10:31:11 AM INFO Adding game
+01/28/2023 10:31:11 AM INFO Game added 748P526 (open)
+01/28/2023 10:31:11 AM INFO Adding game
+01/28/2023 10:31:11 AM INFO Game added 9996W96 (finished)
+01/28/2023 10:31:11 AM INFO Adding game
+01/28/2023 10:31:11 AM INFO Game added 8896W96 (failure)
+01/28/2023 10:31:11 AM INFO Sending reply
+01/28/2023 10:32:50 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:32:50 AM INFO FeeCoop loaded!
+01/28/2023 10:32:50 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:32:51 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:32:51 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:32:54 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:32:55 AM INFO Searching for current user and {}
+01/28/2023 10:32:55 AM INFO Len is 5
+01/28/2023 10:32:55 AM INFO Adding game
+01/28/2023 10:32:55 AM INFO Game added 663NB4R (open)
+01/28/2023 10:32:55 AM INFO Adding game
+01/28/2023 10:32:55 AM INFO Game added 748P526 (open)
+01/28/2023 10:32:55 AM INFO Adding game
+01/28/2023 10:32:55 AM INFO Game added 9996W96 (finished)
+01/28/2023 10:32:55 AM INFO Adding game
+01/28/2023 10:32:55 AM INFO Game added 8896W96 (failure)
+01/28/2023 10:32:55 AM INFO Adding game
+01/28/2023 10:32:55 AM INFO Game added 9999526 (open)
+01/28/2023 10:32:55 AM INFO Sending reply
+01/28/2023 10:33:37 AM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 10:33:37 AM INFO FeeCoop loaded!
+01/28/2023 10:33:37 AM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 10:33:38 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:33:38 AM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 10:33:42 AM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 10:33:43 AM INFO Searching for current user and {}
+01/28/2023 10:33:43 AM INFO Len is 5
+01/28/2023 10:33:43 AM INFO Adding game
+01/28/2023 10:33:43 AM INFO Game added 663NB4R (open)
+01/28/2023 10:33:43 AM INFO Adding game
+01/28/2023 10:33:43 AM INFO Game added 748P526 (open)
+01/28/2023 10:33:43 AM INFO Adding game
+01/28/2023 10:33:43 AM INFO Game added 9996W96 (finished)
+01/28/2023 10:33:43 AM INFO Adding game
+01/28/2023 10:33:43 AM INFO Game added 8896W96 (failure)
+01/28/2023 10:33:43 AM INFO Adding game
+01/28/2023 10:33:43 AM INFO Game added 9999526 (open) (group pass locked)
+01/28/2023 10:33:43 AM INFO Sending reply
+01/28/2023 10:33:50 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:33:50 AM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 10:33:50 AM INFO Len is 3
+01/28/2023 10:33:50 AM INFO Adding game
+01/28/2023 10:33:50 AM INFO Game added 663NB4R
+01/28/2023 10:33:50 AM INFO Adding game
+01/28/2023 10:33:50 AM INFO Game added 748P526
+01/28/2023 10:33:50 AM INFO Sending reply
+01/28/2023 10:35:06 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:35:07 AM INFO Searching for {'status': 'open', 'group_pass': '11118888'}
+01/28/2023 10:35:07 AM INFO Len is 1
+01/28/2023 10:35:07 AM INFO Adding game
+01/28/2023 10:35:07 AM INFO Game added 9999526
+01/28/2023 10:35:07 AM INFO Sending reply
+01/28/2023 10:35:26 AM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 10:35:27 AM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 10:35:27 AM INFO Len is 3
+01/28/2023 10:35:27 AM INFO Adding game
+01/28/2023 10:35:27 AM INFO Game added 663NB4R
+01/28/2023 10:35:27 AM INFO Adding game
+01/28/2023 10:35:27 AM INFO Game added 748P526
+01/28/2023 10:35:27 AM INFO Sending reply
+01/28/2023 12:34:17 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:34:17 PM INFO FeeCoop loaded!
+01/28/2023 12:34:17 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:34:18 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:34:18 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:34:25 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:34:26 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:34:26 PM INFO Len is 3
+01/28/2023 12:34:26 PM INFO Adding game
+01/28/2023 12:34:26 PM INFO Game added 663NB4R
+01/28/2023 12:34:26 PM INFO Adding game
+01/28/2023 12:34:26 PM INFO Game added 748P526
+01/28/2023 12:34:26 PM INFO Sending reply
+01/28/2023 12:34:28 PM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 12:34:29 PM INFO Searching for current user and {}
+01/28/2023 12:34:29 PM INFO Len is 5
+01/28/2023 12:34:29 PM INFO Adding game
+01/28/2023 12:34:29 PM INFO Game added 663NB4R (open)
+01/28/2023 12:34:29 PM INFO Adding game
+01/28/2023 12:34:29 PM INFO Game added 748P526 (open)
+01/28/2023 12:34:29 PM INFO Adding game
+01/28/2023 12:34:29 PM INFO Game added 9996W96 (finished)
+01/28/2023 12:34:29 PM INFO Adding game
+01/28/2023 12:34:29 PM INFO Game added 8896W96 (failure)
+01/28/2023 12:34:29 PM INFO Adding game
+01/28/2023 12:34:29 PM INFO Game added 9999526 (open) (group pass locked)
+01/28/2023 12:34:29 PM INFO Sending reply
+01/28/2023 12:34:33 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-37' coro=<FeeCoop.show_game_docid() done, defined at d:\VPS\fire-emblem-engage-coop\fee_coop.py:590> exception=UnboundLocalError("local variable 'user_is_host' referenced before assignment")>
+Traceback (most recent call last):
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 595, in show_game_docid
+    components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 370, in build_components_for_game
+    if user_is_host or (user_is_participant and days_since_last_activity > 1):
+UnboundLocalError: local variable 'user_is_host' referenced before assignment
+01/28/2023 12:35:02 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:35:02 PM INFO FeeCoop loaded!
+01/28/2023 12:35:02 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:35:03 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:35:03 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:35:23 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:35:24 PM INFO Searching for {'status': 'open', 'group_pass': '11119999'}
+01/28/2023 12:35:24 PM INFO Len is 0
+01/28/2023 12:35:24 PM INFO Sending reply
+01/28/2023 12:35:49 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:35:49 PM INFO Searching for {'status': 'open', 'group_pass': '11118888'}
+01/28/2023 12:35:49 PM INFO Len is 1
+01/28/2023 12:35:49 PM INFO Adding game
+01/28/2023 12:35:49 PM INFO Game added 9999526
+01/28/2023 12:35:49 PM INFO Sending reply
+01/28/2023 12:38:27 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:38:28 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:38:28 PM INFO Len is 3
+01/28/2023 12:38:28 PM INFO Adding game
+01/28/2023 12:38:28 PM INFO Game added 663NB4R
+01/28/2023 12:38:28 PM INFO Adding game
+01/28/2023 12:38:28 PM INFO Game added 748P526
+01/28/2023 12:38:28 PM INFO Sending reply
+01/28/2023 12:39:05 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:39:06 PM INFO Searching for {'status': 'open', 'group_pass': '11118888'}
+01/28/2023 12:39:06 PM INFO Len is 1
+01/28/2023 12:39:06 PM INFO Adding game
+01/28/2023 12:39:06 PM INFO Game added 9999526
+01/28/2023 12:39:06 PM INFO Sending reply
+01/28/2023 12:40:38 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:40:38 PM INFO FeeCoop loaded!
+01/28/2023 12:40:38 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:40:39 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:40:39 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:40:46 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:40:46 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:40:46 PM INFO Len is 4
+01/28/2023 12:40:46 PM INFO Adding game
+01/28/2023 12:40:47 PM INFO Game added 748P526
+01/28/2023 12:40:47 PM INFO Adding game
+01/28/2023 12:40:47 PM INFO Game added 663NB4R
+01/28/2023 12:40:47 PM INFO Adding game
+01/28/2023 12:40:47 PM INFO Game added 748P526
+01/28/2023 12:40:47 PM INFO Sending reply
+01/28/2023 12:43:08 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:43:09 PM INFO FeeCoop loaded!
+01/28/2023 12:43:09 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:43:10 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:43:10 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:43:15 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:43:15 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:43:15 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-22' coro=<FeeCoop.fee() done, defined at D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py:721> exception=TypeError("can't compare offset-naive and offset-aware datetimes")>
+Traceback (most recent call last):
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 753, in dispatch
+    return await self.__call(
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 892, in __call
+    return await _coro(ctx, *args, **kwargs)
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 970, in wrapper
+    raise e
+  File "D:\VPS\fire-emblem-engage-coop\venv\lib\site-packages\interactions\client\models\command.py", line 938, in wrapper
+    return await coro(self.extension, ctx, *args, **kwargs)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 533, in fee_opengames
+    return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=ephemeral)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 280, in show_game_list
+    sorted_games = sorted(games, key=sort_by_timestamp,reverse=False)
+TypeError: can't compare offset-naive and offset-aware datetimes
+01/28/2023 12:44:20 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:44:20 PM INFO FeeCoop loaded!
+01/28/2023 12:44:20 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:44:21 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:44:21 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:44:23 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:44:24 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:44:24 PM INFO Len is 4
+01/28/2023 12:44:24 PM INFO Adding game
+01/28/2023 12:44:24 PM INFO Game added 748P526
+01/28/2023 12:44:24 PM INFO Adding game
+01/28/2023 12:44:24 PM INFO Game added 663NB4R
+01/28/2023 12:44:24 PM INFO Adding game
+01/28/2023 12:44:24 PM INFO Game added 748P526
+01/28/2023 12:44:24 PM INFO Sending reply
+01/28/2023 12:44:40 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-41' coro=<FeeCoop.fee_join_game() done, defined at d:\VPS\fire-emblem-engage-coop\fee_coop.py:559> exception=AttributeError("'Message' object has no attribute 'message'")>
+Traceback (most recent call last):
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 562, in fee_join_game
+    doc_id = await self.get_doc_id_from_message(ctx.message, status="open")
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 208, in get_doc_id_from_message
+    if not ctx.message.embeds:
+AttributeError: 'Message' object has no attribute 'message'
+01/28/2023 12:45:01 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:45:01 PM INFO FeeCoop loaded!
+01/28/2023 12:45:02 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:45:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:45:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:45:07 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:45:08 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:45:08 PM INFO Len is 4
+01/28/2023 12:45:08 PM INFO Adding game
+01/28/2023 12:45:08 PM INFO Game added 748P526
+01/28/2023 12:45:08 PM INFO Adding game
+01/28/2023 12:45:08 PM INFO Game added 663NB4R
+01/28/2023 12:45:08 PM INFO Adding game
+01/28/2023 12:45:08 PM INFO Game added 748P526
+01/28/2023 12:45:08 PM INFO Sending reply
+01/28/2023 12:45:14 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-36' coro=<FeeCoop.fee_join_game() done, defined at d:\VPS\fire-emblem-engage-coop\fee_coop.py:559> exception=UnboundLocalError("local variable 'embed' referenced before assignment")>
+Traceback (most recent call last):
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 599, in fee_join_game
+    embed.set_author(name=username, icon_url=started_userobj.avatar_url)
+UnboundLocalError: local variable 'embed' referenced before assignment
+01/28/2023 12:45:43 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:45:43 PM INFO FeeCoop loaded!
+01/28/2023 12:45:44 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:45:44 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:45:44 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:49:00 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:49:00 PM INFO FeeCoop loaded!
+01/28/2023 12:49:01 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:49:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:49:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:49:09 PM INFO Request fee_mygames by JumpingCoconut#8515
+01/28/2023 12:49:10 PM INFO Searching for current user and {}
+01/28/2023 12:49:10 PM INFO Len is 5
+01/28/2023 12:49:10 PM INFO Adding game
+01/28/2023 12:49:10 PM INFO Game added 663NB4R (open)
+01/28/2023 12:49:10 PM INFO Adding game
+01/28/2023 12:49:10 PM INFO Game added 748P526 (open)
+01/28/2023 12:49:10 PM INFO Adding game
+01/28/2023 12:49:10 PM INFO Game added 9996W96 (success)
+01/28/2023 12:49:10 PM INFO Adding game
+01/28/2023 12:49:10 PM INFO Game added 8896W96 (finished)
+01/28/2023 12:49:10 PM INFO Adding game
+01/28/2023 12:49:10 PM INFO Game added 9999526 (open) (group pass locked)
+01/28/2023 12:49:10 PM INFO Sending reply
+01/28/2023 12:49:12 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:49:12 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:49:12 PM INFO Len is 4
+01/28/2023 12:49:12 PM INFO Adding game
+01/28/2023 12:49:12 PM INFO Game added 748P526
+01/28/2023 12:49:12 PM INFO Adding game
+01/28/2023 12:49:12 PM INFO Game added 663NB4R
+01/28/2023 12:49:12 PM INFO Adding game
+01/28/2023 12:49:12 PM INFO Game added 748P526
+01/28/2023 12:49:12 PM INFO Sending reply
+01/28/2023 12:49:21 PM INFO Days since last activity: 0
+01/28/2023 12:49:51 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:49:52 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:49:52 PM INFO Len is 4
+01/28/2023 12:49:52 PM INFO Adding game
+01/28/2023 12:49:52 PM INFO Game added 748P526
+01/28/2023 12:49:52 PM INFO Adding game
+01/28/2023 12:49:52 PM INFO Game added 663NB4R
+01/28/2023 12:49:52 PM INFO Adding game
+01/28/2023 12:49:52 PM INFO Game added 748P526
+01/28/2023 12:49:52 PM INFO Sending reply
+01/28/2023 12:49:54 PM INFO Days since last activity: 2
+01/28/2023 12:50:01 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:50:01 PM INFO FeeCoop loaded!
+01/28/2023 12:50:02 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:50:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:50:02 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:50:08 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:50:09 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:50:09 PM INFO Len is 4
+01/28/2023 12:50:09 PM INFO Adding game
+01/28/2023 12:50:09 PM INFO Game added 748P526
+01/28/2023 12:50:09 PM INFO Adding game
+01/28/2023 12:50:09 PM INFO Game added 663NB4R
+01/28/2023 12:50:09 PM INFO Adding game
+01/28/2023 12:50:10 PM INFO Game added 748P526
+01/28/2023 12:50:10 PM INFO Sending reply
+01/28/2023 12:50:12 PM INFO Days since last activity: 2
+01/28/2023 12:50:42 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 12:50:42 PM INFO FeeCoop loaded!
+01/28/2023 12:50:42 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 12:50:43 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:50:43 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 12:58:20 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 12:58:21 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 12:58:21 PM INFO Len is 4
+01/28/2023 12:58:21 PM INFO Adding game
+01/28/2023 12:58:21 PM INFO Game added 7999996
+01/28/2023 12:58:21 PM INFO Adding game
+01/28/2023 12:58:21 PM INFO Game added 663NB4R
+01/28/2023 12:58:21 PM INFO Adding game
+01/28/2023 12:58:21 PM INFO Game added 748P526
+01/28/2023 12:58:21 PM INFO Sending reply
+01/28/2023 01:15:05 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 01:15:05 PM INFO FeeCoop loaded!
+01/28/2023 01:15:06 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 01:15:06 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 01:15:06 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 01:15:25 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 01:15:26 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 01:15:26 PM INFO Len is 4
+01/28/2023 01:15:26 PM INFO Adding game
+01/28/2023 01:15:26 PM INFO Game added 7999996
+01/28/2023 01:15:26 PM INFO Adding game
+01/28/2023 01:15:26 PM INFO Game added 663NB4R
+01/28/2023 01:15:26 PM INFO Adding game
+01/28/2023 01:15:26 PM INFO Game added 748P526
+01/28/2023 01:15:26 PM INFO Sending reply
+01/28/2023 01:15:29 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-35' coro=<FeeCoop.show_game_docid() done, defined at d:\VPS\fire-emblem-engage-coop\fee_coop.py:661> exception=NameError("name 'turns' is not defined")>
+Traceback (most recent call last):
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 666, in show_game_docid
+    components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 407, in build_components_for_game
+    if str(ctx.user.id) in [turn['user'] for turn in turns]:
+NameError: name 'turns' is not defined
+01/28/2023 01:15:40 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 01:15:40 PM INFO FeeCoop loaded!
+01/28/2023 01:15:41 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 01:15:41 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 01:15:41 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 01:15:46 PM INFO Request fee_opengames by JumpingCoconut#8515
+01/28/2023 01:15:46 PM INFO Searching for {'status': 'open', 'group_pass': ''}
+01/28/2023 01:15:46 PM INFO Len is 4
+01/28/2023 01:15:46 PM INFO Adding game
+01/28/2023 01:15:46 PM INFO Game added 7999996
+01/28/2023 01:15:46 PM INFO Adding game
+01/28/2023 01:15:46 PM INFO Game added 663NB4R
+01/28/2023 01:15:46 PM INFO Adding game
+01/28/2023 01:15:46 PM INFO Game added 748P526
+01/28/2023 01:15:46 PM INFO Sending reply
+01/28/2023 01:15:49 PM ERROR Task exception was never retrieved
+future: <Task finished name='Task-31' coro=<FeeCoop.show_game_docid() done, defined at d:\VPS\fire-emblem-engage-coop\fee_coop.py:661> exception=NameError("name 'turns' is not defined")>
+Traceback (most recent call last):
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 666, in show_game_docid
+    components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+  File "d:\VPS\fire-emblem-engage-coop\fee_coop.py", line 407, in build_components_for_game
+    if str(ctx.user.id) in [turn['user'] for turn in turns]:
+NameError: name 'turns' is not defined
+01/28/2023 01:16:16 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 01:16:16 PM INFO FeeCoop loaded!
+01/28/2023 01:16:17 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 01:16:17 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 01:16:17 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
