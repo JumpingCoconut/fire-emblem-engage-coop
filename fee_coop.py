@@ -718,6 +718,8 @@ class FeeCoop(interactions.Extension):
                                             emoji=emoji
                                             )
                                         )
+                if len(options) == 25:
+                    break
             s1 = SelectMenu(
                             custom_id="select_map",
                             placeholder="Select map for new game",
@@ -1094,13 +1096,13 @@ class FeeCoop(interactions.Extension):
                         this_server_id = str(ctx.guild_id)
                     if started_serverid and started_serverid != this_server_id:
                         username += " (server " + started_serverobj.name + ")"
-
-                    options.append(SelectOption(label=result.get("code"), 
-                                                    value=result.doc_id, 
-                                                    description=str(mapname + "by " + username)[:100],
-                                                    emoji=emoji
+                    if len(options) < 25:
+                        options.append(SelectOption(label=result.get("code"), 
+                                                        value=result.doc_id, 
+                                                        description=str(mapname + "by " + username)[:100],
+                                                        emoji=emoji
+                                                        )
                                                     )
-                                                )
                 # Max amount of discord embeds
                 embed_counter += 1
                 if embed_counter >= 10:
