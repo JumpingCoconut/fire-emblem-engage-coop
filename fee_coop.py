@@ -829,7 +829,7 @@ class FeeCoop(interactions.Extension):
             doc_id = self.db.insert(new_item) 
             embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
             components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
-            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
         else:
             return await ctx.send("Creating new game failed.", ephemeral=True)
 
@@ -884,6 +884,9 @@ class FeeCoop(interactions.Extension):
         else:
             ephemeral = False
 
+        if new_status == "success":
+            ephemeral = False
+
         # Game found?
         if not doc_id:
             return await ctx.send("Game not found", ephemeral=True)
@@ -929,7 +932,7 @@ class FeeCoop(interactions.Extension):
             for turn in turns[1:]:
                 userid = turn["user"]
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
-                userobj.send(embeds=[embed], files=files)
+                await userobj.send(embeds=[embed], files=files)
 
         # Update message in the current channel for the updating user
         return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
