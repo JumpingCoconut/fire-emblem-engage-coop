@@ -53,8 +53,8 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
-        make_testdata = True
-        if make_testdata:
+        add_testdata = False
+        if add_testdata:
             # Test data
             new_item = {    "code": "663NB4R", 
                             "map": 1, 
@@ -182,7 +182,7 @@ class FeeCoop(interactions.Extension):
             else:
                 return datetime.datetime.max
 
-        sorted_games = sorted(games, key=sort_by_timestamp,reverse=True)
+        sorted_games = sorted(games, key=sort_by_timestamp,reverse=False)
         description = ""
         options = []
         logging.info("Len is " + str(len(sorted_games)))
@@ -402,6 +402,14 @@ class FeeCoop(interactions.Extension):
         else:
             status = None
         return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
+
+    # Select menu processing
+    @interactions.extension_component("show_game_docid")
+    async def show_game_docid(self, ctx, value):
+        # User didnt select a speaker. Send a message and delete it so discords knows we "processed" it.
+        doc_id = value[0]
+        embed = await self.build_embed_for_game(doc_id=doc_id, ctx=ctx)
+        return await ctx.send(embeds=[embed], ephemeral=ctx.message.ephemeral)
 
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
