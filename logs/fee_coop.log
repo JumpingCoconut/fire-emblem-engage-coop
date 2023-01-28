@@ -1466,3 +1466,8 @@ TypeError: Object of type Snowflake is not JSON serializable
 01/28/2023 07:25:23 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
 01/28/2023 07:25:23 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
 01/28/2023 07:25:23 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 07:26:21 PM INFO Initializing script from D:\VPS\fire-emblem-engage-coop
+01/28/2023 07:26:21 PM INFO FeeCoop loaded!
+01/28/2023 07:26:21 PM WARNING The HTTP client has exhausted a per-route ratelimit. Locking route for 0.999 seconds.
+01/28/2023 07:26:22 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
+01/28/2023 07:26:22 PM INFO Current attributes to compare: type, name, description, options, default_member_permissions, dm_permission, name_localizations, description_localizations.
