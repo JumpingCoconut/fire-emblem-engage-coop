@@ -175,7 +175,7 @@ class FeeCoop(interactions.Extension):
             timestamp = datetime.datetime.fromisoformat(timestamp_str)
             return timestamp
 
-        sorted_games = sorted(games.items(), key=lambda x: sort_by_timestamp(x[1]),reverse=True)
+        sorted_games = sorted(games, key=lambda x: sort_by_timestamp(x[1]),reverse=True)
         description = ""
         options = []
         for entry in sorted_games:
