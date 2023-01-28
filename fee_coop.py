@@ -181,7 +181,7 @@ class FeeCoop(interactions.Extension):
         sorted_games = sorted(games, key=sort_by_timestamp,reverse=True)
         description = ""
         options = []
-        logging.info("Len is " + len(sorted_games)))
+        logging.info("Len is " + len(sorted_games))
         for entry in sorted_games:
             turns = entry.get("turns", [])
             # Some games don't want to be seen unless they are on a specific server.
