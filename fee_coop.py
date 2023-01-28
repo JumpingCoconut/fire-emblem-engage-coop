@@ -43,11 +43,11 @@ class FeeCoop(interactions.Extension):
             "hit" : "<:hit:1068643341757055006>",
             "res" : "<:res:1068643357322117121>",
             "spd" : "<:spd:1068643359448637552>",
-            "map1" : "<:map1:1068643343418015905>",
-            "map2" : "<:map2:1068643345334800467>",
-            "map3" : "<:map3:1068643347486486618>",
-            "map4" : "<:map4:1068643350376353792>",
-            "map5" : "<:map5:1068643351697559693>",
+            "map1" : "<:map1:1068700386753511534>",
+            "map2" : "<:map2:1068700389165240411>",
+            "map3" : "<:map3:1068700390641639554>",
+            "map4" : "<:map4:1068700391556005979>",
+            "map5" : "<:map5:1068700393938366565>",
         }
 
         # Active games from database
@@ -160,12 +160,12 @@ class FeeCoop(interactions.Extension):
             # EVERY Turn object must have the same server ID as the current server
             logging.info("Searching for current server and " + str(game_search_fragment))
             TurnsQ = Query()
-            games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.all(TurnsQ.server == str(ctx.guild_id)))
+            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.all(TurnsQ.server == str(ctx.guild_id))))
         elif for_user:
             # The current user must be present in ANY turn, not neccessarily in all turns
             logging.info("Searching for current user and " + str(game_search_fragment))
             TurnsQ = Query()
-            games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.any(TurnsQ.user == str(ctx.user.id)))
+            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
         else:
             # Just match the broad search from above
             logging.info("Searching for " + str(game_search_fragment))
@@ -376,7 +376,8 @@ class FeeCoop(interactions.Extension):
     )
     async def fee_opengames(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None, show_public : bool = True):
         logging.info("Request fee_opengames by " + ctx.user.username + "#" + ctx.user.discriminator)
-        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=show_public)
+        ephemeral = not show_public
+        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=ephemeral)
 
 
     # Fee mygames subcommand. Shows all games where the user participated
