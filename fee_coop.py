@@ -939,6 +939,9 @@ class FeeCoop(interactions.Extension):
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
                 userobj._client = self.client._http
                 await userobj.send(embeds=[embed], files=files)
+                # The interaction library ruins our file pointers after every send, restore them
+                for file in files:
+                    file._fp.seek(0)
 
         # Update message in the current channel for the updating user
         return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
