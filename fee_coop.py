@@ -336,7 +336,8 @@ class FeeCoop(interactions.Extension):
             started_userid = turns[0]["user"]
             started_serverid = turns[0]["server"]
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
-            started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+            if started_serverid:
+                started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
             timestamp = datetime.datetime.fromisoformat(last_activity)
             utc_time = calendar.timegm(timestamp.utctimetuple())
             last_activity_discordstring = "<t:" + str(utc_time) + ":R>"
@@ -482,7 +483,8 @@ class FeeCoop(interactions.Extension):
             started_userid = turns[0]["user"]
             started_serverid = turns[0]["server"]
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
-            started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+            if started_serverid:
+                started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
             color = assign_color_to_user(started_userobj.username)
         else:
             color = assign_color_to_user(ctx.user.username)
@@ -541,7 +543,7 @@ class FeeCoop(interactions.Extension):
 
         if started_userid:
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid != this_server_id:
+            if started_serverid and started_serverid != this_server_id:
                 username += " (server " + started_serverobj.name + ")"
             embed.set_author(name=username, icon_url=started_userobj.avatar_url)
 
@@ -552,7 +554,7 @@ class FeeCoop(interactions.Extension):
                 username = userobj.username + "#" + userobj.discriminator
                 serverid = turn["server"]
                 # Show if its from a different server
-                if serverid != this_server_id:
+                if serverid and serverid != this_server_id:
                     serverobj = await interactions.get(self.bot, interactions.Guild, object_id=serverid)
                     username += " (server " + serverobj.name + ")"
                 timestamp = datetime.datetime.fromisoformat(turn["timestamp"])
@@ -745,13 +747,14 @@ class FeeCoop(interactions.Extension):
             started_userid = turns[0]["user"]
             started_serverid = turns[0]["server"]
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
-            started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+            if started_serverid:
+                started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
             color = assign_color_to_user(started_userobj.username)
 
         title = code
         color = assign_color_to_user(ctx.user.username)
         description = "Join the game using the above code in Fire Emblem Engage: Relay Trials now!"
-        if server_only:
+        if server_only and started_serverid:
             description += "\nPlease note that the game opener only wants users from the server " + started_serverobj.name + " to join."
         if group_pass:
             description += "\nPlease note that the game opener only wants users with a group pass to join."
@@ -1049,12 +1052,13 @@ class FeeCoop(interactions.Extension):
                     started_userid = turns[0]["user"]
                     started_serverid = turns[0]["server"]
                     started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
-                    started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+                    if started_serverid:
+                        started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
                     username = started_userobj.username + "#" + started_userobj.discriminator
                     this_server_id = ""
                     if ctx.guild_id:
                         this_server_id = str(ctx.guild_id)
-                    if started_serverid != this_server_id:
+                    if started_serverid and started_serverid != this_server_id:
                         username += " (server " + started_serverobj.name + ")"
 
                     options.append(SelectOption(label=result.get("code"), 
