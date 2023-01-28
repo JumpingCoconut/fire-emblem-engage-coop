@@ -865,7 +865,7 @@ class FeeCoop(interactions.Extension):
         started_userid = turns[0]["user"]
         await ctx.message.delete()
         if str(ctx.user.id) == started_userid:
-            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
+            return await ctx.send(embeds=[embed], components=components)
         else:
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             await started_userobj.send(embeds=[embed], components=components)
@@ -929,7 +929,7 @@ class FeeCoop(interactions.Extension):
             for turn in turns[1:]:
                 userid = turn["user"]
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
-                userobj.send(embeds=[embed], files=files, ephemeral=ephemeral)
+                userobj.send(embeds=[embed], files=files)
 
         # Update message in the current channel for the updating user
         return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
