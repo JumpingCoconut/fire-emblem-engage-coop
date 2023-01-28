@@ -158,14 +158,17 @@ class FeeCoop(interactions.Extension):
         GamesQ = Query()
         if server_only:
             # EVERY Turn object must have the same server ID as the current server
+            logging.info("Searching for current server and " + str(game_search_fragment))
             TurnsQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.all(TurnsQ.server == str(ctx.guild_id)))
         elif for_user:
             # The current user must be present in ANY turn, not neccessarily in all turns
+            logging.info("Searching for current user and " + str(game_search_fragment))
             TurnsQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.any(TurnsQ.user == str(ctx.user.id)))
         else:
             # Just match the broad search from above
+            logging.info("Searching for " + str(game_search_fragment))
             games = self.db.search(GamesQ.fragment(game_search_fragment))
 
         # Sort the dict by timestamp and go
@@ -239,14 +242,16 @@ class FeeCoop(interactions.Extension):
         embed.description = description
         
         # Select menu to show one game in detail
-
-        s1 = SelectMenu(
-                custom_id="show_game_docid",
-                placeholder="Select game",
-                options=options,
-            )
+        components = None
+        if len(options) > 0:
+            s1 = SelectMenu(
+                    custom_id="show_game_docid",
+                    placeholder="Select game",
+                    options=options,
+                )
+            components.append([s1])
         logging.info("Sending reply")
-        return await ctx.send(embeds=[embed], components=[[s1]], ephemeral=ephemeral)
+        return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
     # Makes one embed for each given game ID
     async def build_embed_for_game(self, ctx, doc_id):
