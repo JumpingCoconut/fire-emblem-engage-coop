@@ -447,9 +447,9 @@ class FeeCoop(interactions.Extension):
         button_join = None
         button_abandon = None
         
-        # Join game if didnt already
-        if not user_is_participant:
-            button_join = Button(style=3, custom_id="join_game", label="Join", emoji=interactions.Emoji(name="⚔️"))
+        # Join game - show it always, we only check later if the user is already in the game.
+        #if not user_is_participant:
+        button_join = Button(style=3, custom_id="join_game", label="Join", emoji=interactions.Emoji(name="⚔️"))
 
         # Allow to abandon the game? Host can abandon always, participants after one day
         if delete_game_allowed:
@@ -710,7 +710,7 @@ class FeeCoop(interactions.Extension):
                 embed.set_footer(text="Group pass: " + group_pass)
             elif server_only:
                 embed.set_footer(text="Only for server: " + server_obj.name, icon_url=server_obj.icon_url)
-            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
         
    # Join the game
     @interactions.extension_component("join_game")
@@ -729,8 +729,14 @@ class FeeCoop(interactions.Extension):
         if not doc_id:
             return await ctx.send("Could not join game, maybe it was finished already?", ephemeral=True)
 
-        # Ask the user if it worked or not
         entry = self.db.get(doc_id=doc_id)
+
+        # User alreay in the game?
+        turns = entry.get("turns", [])
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            return await ctx.send("You already participated in the game, you can't join it again.", ephemeral=True)
+
+        # Ask the user if it worked or not
         code = entry["code"]
         server_only = entry.get("server_only")
         group_pass = entry.get("group_pass")
@@ -940,7 +946,7 @@ class FeeCoop(interactions.Extension):
                     )
                 files = [fxy]
                 await userobj.send(embeds=[embed], files=files)
-                
+
             # We have to provide the file again and again for every single send
             f = open(final_picture_path, mode='rb')
             fxy = interactions.File(
