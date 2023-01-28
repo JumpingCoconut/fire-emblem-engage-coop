@@ -53,14 +53,14 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
-        make_testdata = False
+        make_testdata = True
         if make_testdata:
             # Test data
-            new_item = {    "code": "666NB4R", 
-                            "map": 3, 
+            new_item = {    "code": "663NB4R", 
+                            "map": 1, 
                             "server_only" : False,
                             "group_pass" : "", 
-                            "status" : "failed",
+                            "status" : "open",
                             "turns" : [
                                     {
                                         "user" : "330955309763788800", # str(ctx.user.id),
@@ -70,15 +70,15 @@ class FeeCoop(interactions.Extension):
                                 ],
                         }
             self.db.insert(new_item) 
-            new_item = {    "code": "638P526", 
-                            "map": 4, 
+            new_item = {    "code": "748P526", 
+                            "map": 2, 
                             "server_only" : True,
                             "group_pass" : "", 
                             "status" : "open",
                             "turns" : [
                                     {
                                         "user" : str(523211690213376005),
-                                        "server" : str(870019135646613524),
+                                        "server" : str(490564578128822293),
                                         "timestamp" : datetime.datetime.utcnow().isoformat(),
                                     },
                                     {
@@ -89,11 +89,11 @@ class FeeCoop(interactions.Extension):
                                 ],
                         }
             self.db.insert(new_item) 
-            new_item = {    "code": "8CL6W96", 
-                            "map": 5, 
+            new_item = {    "code": "9996W96", 
+                            "map": 3, 
                             "server_only" : False,
-                            "group_pass" : "11118888", 
-                            "status" : "success",
+                            "group_pass" : "", 
+                            "status" : "open",
                             "turns" : [
                                     {
                                         "user" : str(234861064532131842),
@@ -143,6 +143,7 @@ class FeeCoop(interactions.Extension):
         if server_only:
             server_id = ctx.guild_id
             serverobj = await interactions.get(self.bot, interactions.Guild, object_id=server_id)
+            logging.info("Server pic: " + str(serverobj.icon_url))
             embed.set_author(name="Only listing server: " + serverobj.name, icon_url=serverobj.icon_url)
         elif group_pass:
             embed.set_author(name="All games from all servers with group pass: " + group_pass)
