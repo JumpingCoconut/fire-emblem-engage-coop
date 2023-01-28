@@ -360,6 +360,8 @@ class FeeCoop(interactions.Extension):
             if len(description) >= 4096:
                 description = description[0:4096]
                 break
+        else:
+            description = "No games found!"
 
         embed.description = description
         
