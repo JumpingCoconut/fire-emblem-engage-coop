@@ -843,7 +843,7 @@ class FeeCoop(interactions.Extension):
             GamesQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment))
             if (games) and len(games) > 0:
-                return ctx.send("An open game with the code " + code + " already exists!", ephemeral=True)
+                return await ctx.send("An open game with the code " + code + " already exists!", ephemeral=True)
             
             # Server only makes only sense if we are on a server
             this_server_id = ""
