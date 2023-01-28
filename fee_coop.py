@@ -1053,6 +1053,10 @@ class FeeCoop(interactions.Extension):
             group_pass = footer.split()[2]
         elif "Only for server" in footer:
             server_only = True
+        try:
+            await ctx.message.delete()
+        except:
+            pass
         return await self.create_new_game(ctx=ctx, code=code, group_pass=group_pass, map=map, server_only=server_only)
 
     # Rightclick to check the message for game IDs
