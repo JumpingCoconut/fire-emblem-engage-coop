@@ -220,10 +220,44 @@ class FeeCoop(interactions.Extension):
         absolute_path = os.path.abspath(os.path.join(img_directory, random_file))
         return absolute_path, random_file
 
+    # Check for old games and delete them
+    async def purge_old_entries(self, ctx):
+        # Search for open games only
+        game_search_fragment = {"status" : "open"}
+        GamesQ = Query()
+        games = self.db.search(GamesQ.fragment(game_search_fragment))
+
+        # Instead of a fancy TinyDB search we manually select now the entries which are too old
+        for entry in games:
+            turns = entry.get("turns", [])
+            last_activity = turns[-1]["timestamp"]
+            timestamp = datetime.datetime.fromisoformat(last_activity)
+            days_since_last_activity = (datetime.datetime.now() - timestamp).days
+
+            # Older than 1 day? Remove and tell the owner that he can add it again anytime
+            if days_since_last_activity > 1:
+                # Update game status
+                self.db.update({"status" : "abandoned"}, doc_ids=[entry.doc_id])
+
+                # Build an embed for the host to reinstate the game if needed
+                embed = await self.build_embed_for_game(ctx=ctx, doc_id=entry.doc_id)
+                embed.description = "This game has been **abandoned** automatically because it has been inactive for a while now so it likely has already been finished. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
+                embed.description = embed.description[0:4096]
+                # Host gets the "create new game" button
+                button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
+                components = [[button_reinstate]]
+
+                # If this is the host, simple update message. If it is not the host, send the host a private message.
+                started_userid = turns[0]["user"]
+                started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+                started_userobj._client = self.client._http
+                await started_userobj.send(embeds=[embed], components=components)
+                    
+
     # Lists all games with given criteria
     async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False):
-        # Before we attempt to create any kind of list, we should purge the list from old entries. TODO
-        #await self.purge_old_entries(self, ctx)
+        # Before we attempt to create any kind of list, we should purge the list from old entries.
+        await self.purge_old_entries(ctx)
         
         # Group pass should stay secret if possible
         if group_pass:
