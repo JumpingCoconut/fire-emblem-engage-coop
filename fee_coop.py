@@ -171,11 +171,14 @@ class FeeCoop(interactions.Extension):
         # Sort the dict by timestamp and go
         def sort_by_timestamp(game):
             turns = game['turns']
-            timestamp_str = turns[0]['timestamp']
-            timestamp = datetime.datetime.fromisoformat(timestamp_str)
-            return timestamp
+            if turns:
+                timestamp_str = turns[0]['timestamp']
+                timestamp = datetime.datetime.fromisoformat(timestamp_str)
+                return timestamp
+            else:
+                return datetime.datetime.max
 
-        sorted_games = sorted(games, key=lambda x: sort_by_timestamp(x[1]),reverse=True)
+        sorted_games = sorted(games, key=sort_by_timestamp,reverse=True)
         description = ""
         options = []
         for entry in sorted_games:
