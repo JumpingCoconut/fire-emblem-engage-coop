@@ -1,6 +1,7 @@
 # Own files
 .*
 !/.gitignore
+db.json
 
 
 # Byte-compiled / optimized / DLL files
