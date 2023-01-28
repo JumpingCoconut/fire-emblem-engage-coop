@@ -246,7 +246,7 @@ class FeeCoop(interactions.Extension):
                 options=options,
             )
         logging.info("Sending reply")
-        return ctx.send(embeds=[embed], components=[[s1]], ephemeral=ephemeral)
+        return await ctx.send(embeds=[embed], components=[[s1]], ephemeral=ephemeral)
 
     # Makes one embed for each given game ID
     async def build_embed_for_game(self, ctx, doc_id):
