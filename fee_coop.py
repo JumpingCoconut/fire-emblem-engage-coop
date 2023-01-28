@@ -230,6 +230,9 @@ class FeeCoop(interactions.Extension):
     async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False):
         await ctx.defer(ephemeral=ephemeral)
 
+        # Before we attempt to create any kind of list, we should purge the list from old entries. TODO
+        #await self.purge_old_entries(self, ctx)
+        
         # Group pass should stay secret if possible
         if group_pass:
             ephemeral = True
@@ -868,6 +871,7 @@ class FeeCoop(interactions.Extension):
             return await ctx.send(embeds=[embed], components=components)
         else:
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+            started_userobj._client = self.client._http
             await started_userobj.send(embeds=[embed], components=components)
             return await ctx.send("Game abandoned. The host can reinstate the game anytime if desired.", ephemeral=True)        
 
@@ -932,6 +936,7 @@ class FeeCoop(interactions.Extension):
             for turn in turns[1:]:
                 userid = turn["user"]
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
+                userobj._client = self.client._http
                 await userobj.send(embeds=[embed], files=files)
 
         # Update message in the current channel for the updating user
