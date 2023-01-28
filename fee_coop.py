@@ -249,7 +249,7 @@ class FeeCoop(interactions.Extension):
                     placeholder="Select game",
                     options=options,
                 )
-            components.append([s1])
+            components = [[s1]]
         logging.info("Sending reply")
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
