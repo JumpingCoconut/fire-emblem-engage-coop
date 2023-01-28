@@ -195,12 +195,6 @@ class FeeCoop(interactions.Extension):
                                 ],
                         }
             self.db.insert(new_item) 
-            # Now search an entry
-            # Games = Query()
-            # results = self.db.search(Games.code == "666NB4R")
-            # logging.info(str(results[0]["turns"][0]["user"]))
-            # user = await interactions.get(self.bot, interactions.User, object_id=results[0]["turns"][0]["user"])
-            # guild = await interactions.get(self.bot, interactions.Guild, object_id=results[0]["turns"][0]["server"])
         
         logging.info("FeeCoop loaded!")
 
@@ -228,14 +222,14 @@ class FeeCoop(interactions.Extension):
 
     # Lists all games with given criteria
     async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False):
-        await ctx.defer(ephemeral=ephemeral)
-
         # Before we attempt to create any kind of list, we should purge the list from old entries. TODO
         #await self.purge_old_entries(self, ctx)
         
         # Group pass should stay secret if possible
         if group_pass:
             ephemeral = True
+
+        await ctx.defer(ephemeral=ephemeral)
 
         # Server only makes only sense if we have a server (not in private messages)
         if not ctx.guild_id:
@@ -295,7 +289,10 @@ class FeeCoop(interactions.Extension):
             else:
                 return datetime.datetime.max
 
-        sorted_games = sorted(games, key=sort_by_timestamp,reverse=False)
+        reverse_sort = False
+        if for_user:
+            reverse_sort = True
+        sorted_games = sorted(games, key=sort_by_timestamp,reverse=reverse_sort)
         description = ""
         options = []
         logging.info("Len is " + str(len(sorted_games)))
@@ -867,6 +864,7 @@ class FeeCoop(interactions.Extension):
         # Build an embed for the host to reinstate the game if needed
         embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
         embed.description = "This game has been **abandoned** on the request of **" + ctx.user.username + "#" + ctx.user.discriminator + "**. This can happen if the game has been inactive for a while.\n\n\n" + embed.description
+        embed.description = embed.description[0:4096]
         # Host gets the "create new game" button
         button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
         components = [[button_reinstate]]
@@ -875,8 +873,10 @@ class FeeCoop(interactions.Extension):
         entry = self.db.get(doc_id=doc_id)
         turns = entry.get("turns", [])
         started_userid = turns[0]["user"]
-        if ctx.message:
+        try:
             await ctx.message.delete()
+        except:
+            pass
         if str(ctx.user.id) == started_userid:
             return await ctx.send(embeds=[embed], components=components)
         else:
