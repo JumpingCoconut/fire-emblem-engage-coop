@@ -933,7 +933,8 @@ class FeeCoop(interactions.Extension):
             embed.set_image(url="attachment://" + final_picture_name)
         
             # If the game is finished, send a message to everyone involved except for the last user    
-            for turn in turns[1:]:
+            turns.pop()
+            for turn in turns:
                 userid = turn["user"]
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
                 userobj._client = self.client._http
