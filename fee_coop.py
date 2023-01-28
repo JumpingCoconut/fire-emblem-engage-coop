@@ -409,7 +409,7 @@ class FeeCoop(interactions.Extension):
         # User didnt select a speaker. Send a message and delete it so discords knows we "processed" it.
         doc_id = value[0]
         embed = await self.build_embed_for_game(doc_id=doc_id, ctx=ctx)
-        return await ctx.send(embeds=[embed], ephemeral=ctx.message.ephemeral)
+        return await ctx.reply(embeds=[embed])
 
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
