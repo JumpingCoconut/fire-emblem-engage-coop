@@ -866,7 +866,8 @@ class FeeCoop(interactions.Extension):
         entry = self.db.get(doc_id=doc_id)
         turns = entry.get("turns", [])
         started_userid = turns[0]["user"]
-        await ctx.message.delete()
+        if ctx.message:
+            await ctx.message.delete()
         if str(ctx.user.id) == started_userid:
             return await ctx.send(embeds=[embed], components=components)
         else:
