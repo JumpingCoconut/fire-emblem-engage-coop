@@ -132,6 +132,112 @@ class FeeCoop(interactions.Extension):
         
         logging.info("FeeCoop loaded!")
 
+    # Lists all games with given criteria
+    async def show_game_list(self, ctx, server_only=None, group_pass=None, status="open", for_user=None, ephemeral=False):
+        await ctx.defer(ephemeral=ephemeral)
+
+        color = assign_color_to_user(ctx.user.username)
+        title = "Fire Emblem Engage: Relay trials"
+        embed = interactions.Embed(title=title, color=color, provider=interactions.EmbedProvider(name="Fee coop"))
+
+        if server_only:
+            server_id = ctx.guild_id
+            serverobj = await interactions.get(self.bot, interactions.Guild, object_id=server_id)
+            embed.set_author(name="Only listing server: " + serverobj.name, icon_url=serverobj.icon_url)
+        elif group_pass:
+            embed.set_author(name="All games from all servers with group pass: " + group_pass)
+
+        # Prepare a simple search for these criteria
+        game_search_fragment = {}
+        if group_pass:
+            game_search_fragment["group_pass"] = group_pass
+        if status:
+            game_search_fragment["status"] = status
+
+        # Do we have any subcriteria where we need to check the individual turns?
+        Games = Query()
+        if server_only:
+            # EVERY Turn object must have the same server ID as the current server
+            Turns = Query()
+            games = self.db.search(Games.fragment(game_search_fragment) & Games.turns.all(Turns.server == str(ctx.guild_id)))
+        elif for_user:
+            # The current user must be present in ANY turn, not neccessarily in all turns
+            Turns = Query()
+            games = self.db.search(Games.fragment(game_search_fragment) & Games.turns.any(Turns.user == str(ctx.user.id)))
+        else:
+            # Just match the broad search from above
+            games = self.db.search(Games.fragment(game_search_fragment))
+
+        # Sort the dict by timestamp and go
+        def sort_by_timestamp(game):
+            turns = game['turns']
+            timestamp_str = turns[0]['timestamp']
+            timestamp = datetime.datetime.fromisoformat(timestamp_str)
+            return timestamp
+
+        sorted_games = sorted(games.items(), key=lambda x: sort_by_timestamp(x[1]),reverse=True)
+        description = ""
+        options = []
+        for entry in sorted_games:
+            turns = entry.get("turns", [])
+            # Some games don't want to be seen unless they are on a specific server.
+            game_wants_server_only = entry.get("server_only")
+            if game_wants_server_only:
+                game_server_id = turns[0]["server"]
+                if str(ctx.guild_id) != game_server_id:
+                    continue
+
+            # First line: Code and map
+            code = entry["code"]
+            if not status:
+                # If no status was selected, show the current games status
+                code += " (" + entry.get("status") + ")"
+
+            map = entry.get("map")
+            difficulty = self.mapdata[map]["difficulty"]
+            mapname = self.mapdata[map]["name"]
+            maxplayers = self.mapdata[map]["maxplayers"]
+            try: 
+                mapemoji = self.emoji["map" + str(map)]
+            except:
+                mapemoji = ""
+            description += "**" + code + "** - " + mapemoji + " " + mapname + "(" + difficulty + ")\n"
+
+            # Second line: User, timestamp and turn count
+            created_on = turns[0]["timestamp"]
+            started_userid = turns[0]["user"]
+            started_serverid = turns[0]["server"]
+            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+            started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
+            timestamp = datetime.datetime.fromisoformat(created_on)
+            utc_time = calendar.timegm(timestamp.utctimetuple())
+            timestamp_discordstring = "<t:" + str(utc_time) + ":R>"
+            username = started_userobj.username + "#" + started_userobj.discriminator
+            if started_serverid != str(ctx.guild_id):
+                username += " (server " + started_serverobj.name + ")"
+            description += "*by user " + username + ", " + timestamp_discordstring + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players*\n\n"
+
+            # Now prepare the select menu
+            options.append(SelectOption(label=code, 
+                                            value=entry.doc_id, 
+                                            description=str(mapname + "by " + username)[:100],
+                                            emoji=mapemoji
+                                            )
+                                        )
+
+        embed.description = description
+        
+        # Select menu to show one game in detail
+
+        s1 = SelectMenu(
+                custom_id="show_game_docid",
+                placeholder="Select game",
+                options=options,
+            )
+
+
+        return ctx.send(embeds=[embed], components=[[s1]], ephemeral=ephemeral)
+
     # Makes one embed for each given game ID
     async def build_embed_for_game(self, ctx, doc_id):
         entry = self.db.get(doc_id=doc_id)
@@ -149,7 +255,7 @@ class FeeCoop(interactions.Extension):
             started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
             color = assign_color_to_user(started_userobj.username)
         else:
-            color = interactions.Color.red()
+            color = assign_color_to_user(ctx.user.username)
 
         title = code
         if status:
@@ -217,7 +323,69 @@ class FeeCoop(interactions.Extension):
                 embed.add_field(name=username, value=timestamp_discordstring, inline=True)
 
         return embed
-        
+
+    # The fee main command. Its empty because the real stuff happens in the subcommands.
+    @interactions.extension_command()
+    async def fee(self, ctx: interactions.CommandContext):
+        """The Fee base command. This description isn't shown in discord."""
+        pass
+
+    # Fee opengames subcommand. Shows games to join
+    @fee.subcommand(
+        name="opengames",
+        description="Show open relay trials from Fire Emblem Engage",
+        options=[
+            interactions.Option(
+                    name="server_only",
+                    description="Only games from people of this discord server?",
+                    value=False,
+                    type=interactions.OptionType.BOOLEAN,
+                    required=False,
+            ),
+            interactions.Option(
+                    name="group_pass",
+                    description="List only games with this group pass, server independent",
+                    type=interactions.OptionType.STRING,
+                    min_length=0,
+                    max_length=100,
+                    required=False,
+            ),
+            interactions.Option(
+                    name="show_public",
+                    description="Post the list public for everyone in this channel",
+                    type=interactions.OptionType.BOOLEAN,
+                    value=True,
+                    required=False,
+            ),
+        ]
+    )
+    async def fee_opengames(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None, show_public : bool = True):
+        logging.info("Request fee_opengames by " + ctx.user.username + "#" + ctx.user.discriminator)
+        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=show_public)
+
+
+    # Fee mygames subcommand. Shows all games where the user participated
+    @fee.subcommand(
+        name="mygames",
+        description="Show open relay trials from Fire Emblem Engage",
+        options=[
+            interactions.Option(
+                    name="only_open_games",
+                    description="Only games that are not finished yet",
+                    value=False,
+                    type=interactions.OptionType.BOOLEAN,
+                    required=False,
+            ),
+        ]
+    )
+    async def fee_mygames(self, ctx: interactions.CommandContext, only_open_games : bool = False):
+        logging.info("Request fee_mygames by " + ctx.user.username + "#" + ctx.user.discriminator)
+        if only_open_games:
+            status = "open"
+        else:
+            status = None
+        return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
+
     # Rightclick to check the message for game IDs
     @interactions.extension_command(
         type=interactions.ApplicationCommandType.MESSAGE,
@@ -234,9 +402,9 @@ class FeeCoop(interactions.Extension):
                 embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
                 found_games.append(embed)
                 embed_counter += 1
-            while(embed_counter < 10):
-                found_games.append(embed)
-                embed_counter += 1
+                # Max amount of discord embeds
+                if embed_counter >= 10:
+                    break
             return await ctx.send(embeds=found_games, ephemeral=True)
         else:
             return await ctx.send("No valid codes found in this message.", ephemeral=True)
