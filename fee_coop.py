@@ -219,7 +219,7 @@ class FeeCoop(interactions.Extension):
             return games[0].doc_id
 
     # Gets a random image from the directory and returns it
-    async def get_finished_picture(status="success"):
+    async def get_finished_picture(self, status="success"):
         img_directory = "ressources/" + status 
         files = os.listdir(img_directory)
         random_file = random.choice(files)
