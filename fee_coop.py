@@ -155,33 +155,33 @@ class FeeCoop(interactions.Extension):
             game_search_fragment["status"] = status
 
         # Do we have any subcriteria where we need to check the individual turns?
-        Games = Query()
+        GamesQ = Query()
         if server_only:
             # EVERY Turn object must have the same server ID as the current server
-            Turns = Query()
-            games = self.db.search(Games.fragment(game_search_fragment) & Games.turns.all(Turns.server == str(ctx.guild_id)))
+            TurnsQ = Query()
+            games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.all(TurnsQ.server == str(ctx.guild_id)))
         elif for_user:
             # The current user must be present in ANY turn, not neccessarily in all turns
-            Turns = Query()
-            games = self.db.search(Games.fragment(game_search_fragment) & Games.turns.any(Turns.user == str(ctx.user.id)))
+            TurnsQ = Query()
+            games = self.db.search(GamesQ.fragment(game_search_fragment) & GamesQ.turns.any(TurnsQ.user == str(ctx.user.id)))
         else:
             # Just match the broad search from above
-            games = self.db.search(Games.fragment(game_search_fragment))
+            games = self.db.search(GamesQ.fragment(game_search_fragment))
 
         # Sort the dict by timestamp and go
-        # def sort_by_timestamp(game):
-        #     turns = game['turns']
-        #     if turns:
-        #         timestamp_str = turns[0]['timestamp']
-        #         timestamp = datetime.datetime.fromisoformat(timestamp_str)
-        #         return timestamp
-        #     else:
-        #         return datetime.datetime.max
+        def sort_by_timestamp(game):
+            turns = game['turns']
+            if turns:
+                timestamp_str = turns[0]['timestamp']
+                timestamp = datetime.datetime.fromisoformat(timestamp_str)
+                return timestamp
+            else:
+                return datetime.datetime.max
 
-        # sorted_games = sorted(games, key=sort_by_timestamp,reverse=True)
-        sorted_games = games
+        sorted_games = sorted(games, key=sort_by_timestamp,reverse=True)
         description = ""
         options = []
+        logging.info("Len is " + len(sorted_games)))
         for entry in sorted_games:
             turns = entry.get("turns", [])
             # Some games don't want to be seen unless they are on a specific server.
@@ -190,7 +190,8 @@ class FeeCoop(interactions.Extension):
                 game_server_id = turns[0]["server"]
                 if str(ctx.guild_id) != game_server_id:
                     continue
-
+            
+            logging.info("Adding game")
             # First line: Code and map
             code = entry["code"]
             if not status:
@@ -233,6 +234,7 @@ class FeeCoop(interactions.Extension):
                                                 emoji=emoji
                                                 )
                                             )
+            logging.info("Game added " + description)
 
         embed.description = description
         
@@ -243,8 +245,7 @@ class FeeCoop(interactions.Extension):
                 placeholder="Select game",
                 options=options,
             )
-
-
+        logging.info("Sending reply")
         return ctx.send(embeds=[embed], components=[[s1]], ephemeral=ephemeral)
 
     # Makes one embed for each given game ID
