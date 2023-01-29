@@ -570,7 +570,7 @@ class FeeCoop(interactions.Extension):
 
         if started_userid:
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid:
+            if started_serverid and ((not ctx.guild_id) or started_serverid != ctx.guild_id):
                 username += " (server " + started_serverobj.name + ")"
             embed.set_author(name=username, icon_url=started_userobj.avatar_url)
 
