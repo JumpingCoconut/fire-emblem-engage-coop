@@ -801,7 +801,7 @@ class FeeCoop(interactions.Extension):
             embed.description = "A new game has been created! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
             embed.description = embed.description[0:4096]
             components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
-            return await user_obj.send(embeds=[embed], components=components, ephemeral=False)
+            return await user_obj.send(embeds=[embed], components=components)
 
     # Fee coop to show or create a game
     @fee.subcommand(
