@@ -694,6 +694,7 @@ class FeeCoop(interactions.Extension):
         old_active = False
         old_server_only = False
         old_group_pass = ""
+        old_server_id = ""
         if entry:
             doc_id = entry.doc_id
             old_active = entry.get("notifications_active", False)
