@@ -580,8 +580,8 @@ class FeeCoop(interactions.Extension):
                 userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
                 username = userobj.username + "#" + userobj.discriminator
                 serverid = turn["server"]
-                # Show if its from a different server
-                if serverid and started_serverid and serverid != started_serverid:
+                # Show if user is on a server, and if that server is a different server than the starting server or if there is no starting server (start via private message)
+                if serverid and ((not started_serverid) or serverid != started_serverid):
                     serverobj = await interactions.get(self.bot, interactions.Guild, object_id=serverid)
                     username += " (server " + serverobj.name + ")"
                 timestamp = datetime.datetime.fromisoformat(turn["timestamp"])
