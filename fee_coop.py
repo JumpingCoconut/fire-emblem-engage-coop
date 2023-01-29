@@ -732,7 +732,7 @@ class FeeCoop(interactions.Extension):
                             "notifications_server_id" : server_id,
                             "notifications_group_pass" : group_pass
                         }
-            user_config.upsert(new_entry, doc_ids=[doc_id])
+            user_config.upsert(new_entry, UserQ.user == str(ctx.user.id))
             messagetext = "Notifications"
             if not old_active:
                 messagetext += " activated"
