@@ -572,7 +572,8 @@ class FeeCoop(interactions.Extension):
             username = started_userobj.username + "#" + started_userobj.discriminator
             if started_serverid and ((not ctx.guild_id) or started_serverid != ctx.guild_id):
                 username += " (server " + started_serverobj.name + ")"
-            embed.set_author(name=username, icon_url=started_userobj.avatar_url, url="https://discord.com/channels/@me/" + str(started_userobj.id))
+            # Note: Adding URLS to the users private DM channel like this would be nice but it isn't allowed by discord. url="https://discord.com/channels/@me/" + str(started_userobj.id)
+            embed.set_author(name=username, icon_url=started_userobj.avatar_url)
 
         if len(turns) > 1:
             for turn in turns[1:]:
@@ -879,7 +880,7 @@ class FeeCoop(interactions.Extension):
                                         provider=interactions.EmbedProvider(name="Fee coop"),
                                         timestamp=datetime.datetime.utcnow()
                                         )
-            embed.set_author(name=ctx.user.username + "#" + ctx.user.discriminator, icon_url=ctx.user.avatar_url, url="https://discord.com/channels/@me/" + str(ctx.user.id))
+            embed.set_author(name=ctx.user.username + "#" + ctx.user.discriminator, icon_url=ctx.user.avatar_url)
             # Server only makes only sense if we are on a server
             if ctx.guild_id:
                 server_obj = await ctx.get_guild()
