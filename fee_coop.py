@@ -60,7 +60,7 @@ class FeeCoop(interactions.Extension):
                                     },
                                 ],
                         }
-            self.db.insert(new_item) 
+            self.db.insert(new_item)
             new_item = {    "code": "663NB4R", 
                             "map": 1, 
                             "server_only" : False,
@@ -385,7 +385,7 @@ class FeeCoop(interactions.Extension):
                 emoji = interactions.Emoji(id=emoji_id)
                 options.append(SelectOption(label=code, 
                                                 value=entry.doc_id, 
-                                                description=str(mapname + "by " + username)[:100],
+                                                description=str(mapname + " by " + username)[:100],
                                                 emoji=emoji
                                                 )
                                             )
@@ -658,6 +658,150 @@ class FeeCoop(interactions.Extension):
             status = None
         return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
 
+    # Fee notifications turns on private messages for the user when a new game is created
+    @fee.subcommand(
+        name="notifications",
+        description="Turn on or off notifications for new games",
+        options=[
+                interactions.Option(
+                        name="active",
+                        description="False to turn off notifications. True to receive notifications.",
+                        type=interactions.OptionType.BOOLEAN,
+                        required=True,
+                ),
+                interactions.Option(
+                        name="server_only",
+                        description="For ALL new games or just from this server?",
+                        type=interactions.OptionType.BOOLEAN,
+                        required=True,
+                ),
+                interactions.Option(
+                        name="group_pass",
+                        description="Only watch a certain group pass (ignores server restrictions)",
+                        type=interactions.OptionType.STRING,
+                        required=False,
+                ),
+            ]
+        )
+    async def fee_notifications(self, ctx: interactions.CommandContext, active=True, server_only=True, group_pass=""):
+        logging.info("Fee notifications by " + ctx.user.username + "#" + ctx.user.discriminator)
+
+        # Does a setting exist already?
+        user_config = self.db.table("user_config")
+        UserQ = Query()
+        entry = user_config.get(UserQ.user == str(ctx.user.id))
+        doc_id = None
+        old_active = False
+        old_server_only = False
+        old_group_pass = ""
+        if entry:
+            doc_id = entry.doc_id
+            old_active = entry.get("notifications_active", False)
+            old_server_only = entry.get("notifications_server_only", False)
+            old_server_id = entry.get("notifications_server_id", "")
+            old_group_pass = entry.get("notifications_group_pass", "")
+
+        # If group pass, then ignore server_only
+        if group_pass:
+            server_only = False
+
+        # Server ID so we know if the user can be informed by games which only want a certain server
+        server_id = ""
+        if ctx.guild_id:
+            server_id = str(ctx.guild_id)
+        else:
+            # If we have no server, the user can not listen to only games from this server
+            server_only = False
+
+        # Deactivate notification
+        if not active:
+            if old_active:
+                user_config.update({"notifications_active" : False}, doc_ids=[doc_id])
+                return await ctx.send("All notifictations deactivated!", ephemeral=True)
+            else:
+                return await ctx.send("No changes made, notifications were already deactivated for you.", ephemeral=True)
+        else:
+            # Activate notification
+            if old_active and server_only == old_server_only and group_pass == old_group_pass and server_id == old_server_id:
+                return await ctx.send("No changes made, your given notification settings were already active.", ephemeral=True)
+
+            new_entry = {   
+                            "user" : str(ctx.user.id),
+                            "notifications_active" : True, 
+                            "notifications_server_only" : server_only, 
+                            "notifications_server_id" : server_id,
+                            "notifications_group_pass" : group_pass
+                        }
+            user_config.upsert(new_entry, doc_ids=[doc_id])
+            messagetext = "Notifications"
+            if not old_active:
+                messagetext += " activated"
+            else:
+                messagetext += " changed"
+            if server_only != old_server_only:
+                messagetext += ", server_only: " + str(server_only)
+            if server_id != old_server_id:
+                if ctx.guild_id:
+                    server_obj = await ctx.get_guild()
+                    messagetext += ", getting now updates for all games on " + server_obj.name
+                else:
+                    messagetext += ", no server specific updates anymore"
+            if group_pass != old_group_pass:
+                if group_pass:
+                    messagetext += ", watching only for group_pass " + group_pass + " now"
+                else:
+                    messagetext += ", ignoring previous group pass \"" + old_group_pass + "\" now"
+            messagetext += "."
+            return await ctx.send(messagetext, ephemeral=True)
+
+    # Check all users that want to be notified and notify them about the new game
+    async def notify_users(self, ctx, doc_id, server_only, group_pass):
+        
+        # Get the game data
+        game_entry = self.db.get(doc_id=doc_id)
+        if not game_entry:
+            logging.info("notify_users was called with an invalid doc_id " + str(doc_id))
+        
+        # If group pass, then ignore server_only
+        if group_pass:
+            server_only = False
+
+        # Current server
+        server_id = ""
+        if ctx.guild_id:
+            server_id = str(ctx.guild_id)
+        else:
+            server_only = False
+
+        # Find users who want to get informed
+        user_config = self.db.table("user_config")
+        UserQ = Query()
+        entry = user_config.get(UserQ.user == str(ctx.user.id))
+        user_search_fragment = {}
+        if server_only:
+            # This game is only availible on this server so only look for users with this server
+            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass, "notifications_server_id" : server_id}
+        else:
+            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass}
+        
+        # Also, the users we search for should either ignore server restrictions, or have the exact same server as us
+        configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
+                                    & (   
+                                          (UserQ.fragment({"notifications_server_only" : False}))
+                                        | (UserQ.fragment({"notifications_server_id" : server_id}))
+                                    ))
+        for config in configs:
+            # Send every user a private message
+            user_id = config["user"]
+            user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
+            user_obj._client = self.client._http
+            logging("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + game_entry["code"])
+            embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+            embed.description = "A new game has been created! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
+            embed.description = embed.description[0:4096]
+            components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+            return await user_obj.send(embeds=[embed], components=components, ephemeral=False)
+
     # Fee coop to show or create a game
     @fee.subcommand(
             name="coop",
@@ -766,42 +910,30 @@ class FeeCoop(interactions.Extension):
 
         entry = self.db.get(doc_id=doc_id)
 
-        # User alreay in the game?
+        # User already in the game?
         turns = entry.get("turns", [])
         if str(ctx.user.id) in [turn['user'] for turn in turns]:
             return await ctx.send("You already participated in the game, you can't join it again.", ephemeral=True)
 
-        # Ask the user if it worked or not
-        code = entry["code"]
+        # Tell the user how to join the game
         server_only = entry.get("server_only")
         group_pass = entry.get("group_pass")
         turns = entry.get("turns", [])
         if len(turns) > 0:
-            started_userid = turns[0]["user"]
             started_serverid = turns[0]["server"]
-            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             if started_serverid:
                 started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
-            color = assign_color_to_user(started_userobj.username)
 
-        title = code
-        color = assign_color_to_user(ctx.user.username)
-        description = "Join the game using the above code in Fire Emblem Engage: Relay Trials now!"
+        added_description = "Join the game using the above code in Fire Emblem Engage: Relay Trials now!"
         if server_only and started_serverid:
-            description += "\nPlease note that the game opener only wants users from the server " + started_serverobj.name + " to join."
+            added_description += "\nPlease note that the game opener only wants users from the server " + started_serverobj.name + " to join."
         if group_pass:
-            description += "\nPlease note that the game opener only wants users with a group pass to join."
-        description += "\n\nOnce you finished your turns, please use the buttons below to update the game status."
+            added_description += "\nPlease note that the game opener only wants users with a group pass to join."
+        added_description += "\n\nOnce you finished your turns, please use the buttons below to update the game status."
 
-        embed = interactions.Embed(title=title, color=color, description=description, provider=interactions.EmbedProvider(name="Fee coop"))
-
-        username = started_userobj.username + "#" + started_userobj.discriminator
-        this_server_id = ""
-        if ctx.guild_id:
-            this_server_id = str(ctx.guild_id)
-        if started_serverid != this_server_id:
-            username += " (server " + started_serverobj.name + ")"
-        embed.set_author(name=username, icon_url=started_userobj.avatar_url)
+        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+        embed.description = added_description + "\n\n\n" + embed.description
+        embed.description = embed.description[0:4096]
 
         last_turn = False
         map = entry["map"]
@@ -809,7 +941,7 @@ class FeeCoop(interactions.Extension):
         if len(turns) >= (maxplayers - 1):
             last_turn = True
 
-        # Make the buttons
+        # Make the buttons to ask the user if it worked or not
         b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700), disabled=last_turn)
         b2 = Button(style=1, custom_id="game_success", label="Success!", emoji=interactions.Emoji(id=1068852878661398548))
         b3 = Button(style=2, custom_id="game_over", label="Game Over", emoji=interactions.Emoji(id=1068852433129832558))
@@ -839,6 +971,7 @@ class FeeCoop(interactions.Extension):
             embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
             return await ctx.send(embeds=[embed], ephemeral=True)
         elif code:
+            await ctx.defer()
             game_search_fragment = {"code" : code, "status" : "open"}
             GamesQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment))
@@ -870,11 +1003,15 @@ class FeeCoop(interactions.Extension):
                                     }
                                 ],
                         }
-            print(str(new_item))
+
+            # Update database and inform users 
             doc_id = self.db.insert(new_item) 
+            await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
+
+            # Now show that a new game was added
             embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
             components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
-            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
         else:
             return await ctx.send("Creating new game failed.", ephemeral=True)
 
@@ -1019,7 +1156,7 @@ class FeeCoop(interactions.Extension):
     # Join game failed
     @interactions.extension_component("join_game_failed")
     async def join_game_failed(self, ctx):
-        return await ctx.send("This is unfortunate. You can ask the author if the game ID is wrong or if the game is already finished. The author can fix or remove this entry. If this doesn't help, then after a certain time without updates, the entry can be removed by anyone.", ephemeral=True)
+        return await ctx.send("This is unfortunate. You can ask the author if the game ID is wrong or if the game is already finished. The author can fix or remove this entry. If this doesn't help, then after a certain time without updates, the entry will be removed automatically.", ephemeral=True)
 
     # Select menu processing of game select
     @interactions.extension_component("show_game_docid")
@@ -1103,7 +1240,7 @@ class FeeCoop(interactions.Extension):
                     if len(options) < 25:
                         options.append(SelectOption(label=result.get("code"), 
                                                         value=result.doc_id, 
-                                                        description=str(mapname + "by " + username)[:100],
+                                                        description=str(mapname + " by " + username)[:100],
                                                         emoji=emoji
                                                         )
                                                     )
