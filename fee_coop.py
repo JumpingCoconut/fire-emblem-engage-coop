@@ -554,15 +554,11 @@ class FeeCoop(interactions.Extension):
                     rewardemoji = ""
                 embed.description += "\n" + rewardemoji + " " + reward
 
-        this_server_id = ""
-        if ctx.guild_id:
-            this_server_id = str(ctx.guild_id)
-
         if server_only or group_pass:
             # Group pass beats server ID
             if group_pass:
                 # Show only to the host
-                if started_userid and (started_userid == this_server_id):
+                if started_userid and (started_userid == ctx.user.id):
                     embed.set_footer(text="Group pass: " + group_pass)
                 else:
                     embed.set_footer(text="Group pass locked by " + started_userobj.username + "#" + started_userobj.discriminator)
@@ -574,7 +570,7 @@ class FeeCoop(interactions.Extension):
 
         if started_userid:
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid and started_serverid != this_server_id:
+            if started_serverid:
                 username += " (server " + started_serverobj.name + ")"
             embed.set_author(name=username, icon_url=started_userobj.avatar_url)
 
@@ -585,7 +581,7 @@ class FeeCoop(interactions.Extension):
                 username = userobj.username + "#" + userobj.discriminator
                 serverid = turn["server"]
                 # Show if its from a different server
-                if serverid and serverid != this_server_id:
+                if serverid and started_serverid and serverid != started_serverid:
                     serverobj = await interactions.get(self.bot, interactions.Guild, object_id=serverid)
                     username += " (server " + serverobj.name + ")"
                 timestamp = datetime.datetime.fromisoformat(turn["timestamp"])
