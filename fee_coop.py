@@ -794,9 +794,13 @@ class FeeCoop(interactions.Extension):
         for config in configs:
             # Send every user a private message
             user_id = config["user"]
+            # Except the current user
+            if user_id == str(ctx.user.id):
+                continue
             user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
             user_obj._client = self.client._http
             logging.info("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + str(game_entry.get("code")))
+            # Build embed and send it
             embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
             embed.description = "A new game has been created! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
             embed.description = embed.description[0:4096]
