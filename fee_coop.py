@@ -1144,18 +1144,33 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("game_ongoing")
     async def game_ongoing(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        # User already in the game?
+        entry = self.db.get(doc_id=doc_id)
+        turns = entry.get("turns", [])
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="open")
 
     # Game successfully finished!
     @interactions.extension_component("game_success")
     async def game_success(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        # User already in the game?
+        entry = self.db.get(doc_id=doc_id)
+        turns = entry.get("turns", [])
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="success")
 
     # Game successfully finished!
     @interactions.extension_component("game_over")
     async def game_over(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        # User already in the game?
+        entry = self.db.get(doc_id=doc_id)
+        turns = entry.get("turns", [])
+        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+            return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="finished")
 
     # Join game failed

@@ -59,5 +59,17 @@
             "Avo Crystal",
             "Ddg Crystal"
         ]
+    },
+    {
+        "name": "Vicious Vulcano",
+        "difficulty": "Hard",
+        "maxturns": 3,
+        "maxplayers": 5,
+        "possible_rewards": [
+            "Mt Crystal",
+            "Hit Crystal",
+            "Avo Crystal",
+            "Ddg Crystal"
+        ]
     }
 ]
