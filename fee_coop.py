@@ -782,10 +782,10 @@ class FeeCoop(interactions.Extension):
             # This game is only availible on this server so only look for users who are on this server
             server_obj = await ctx.get_guild()
             logging.info("Checking server " + server_obj.name + " members: " + str(server_obj.members))
-            member_ids = []
+            user_ids = []
             for member in server_obj.members:
-                member_ids.append(str(member.id))
-            logging.info("Member ids: " + str(member_ids))
+                user_ids.append(str(member.user.id))
+            logging.info("User ids: " + str(user_ids))
             # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
             configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
                                         & (   
@@ -807,6 +807,7 @@ class FeeCoop(interactions.Extension):
             # Send every user a private message
             user_id = config["user"]
             # Except the current user
+            # TODO
             #if user_id == str(ctx.user.id):
                 #continue
             user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
