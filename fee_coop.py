@@ -802,9 +802,8 @@ class FeeCoop(interactions.Extension):
             # Send every user a private message
             user_id = config["user"]
             # Except the current user
-            # TODO remove this after testing
-            #if user_id == str(ctx.user.id):
-                #continue
+            if user_id == str(ctx.user.id):
+                continue
             user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
             user_obj._client = self.client._http
             logging.info("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + str(game_entry.get("code")))
