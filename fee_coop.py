@@ -742,7 +742,7 @@ class FeeCoop(interactions.Extension):
                 messagetext += " changed"
             if server_only != old_server_only:
                 messagetext += ", server_only is now: " + str(server_only)
-            if server_only and (server_id != old_server_id):
+            elif server_only and (server_id != old_server_id):
                 if ctx.guild_id:
                     server_obj = await ctx.get_guild()
                     messagetext += ", getting now updates only for new games on " + server_obj.name
@@ -776,42 +776,28 @@ class FeeCoop(interactions.Extension):
         # Find users who want to get informed
         user_config = self.db.table("user_config")
         UserQ = Query()
-        # Everyone who has notifications active and the same group pass (default group pass is "")
-        user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass}
+        entry = user_config.get(UserQ.user == str(ctx.user.id))
+        user_search_fragment = {}
         if server_only:
-            # This game is only availible on this server so only look for users who are on this server
-            server_obj = await ctx.get_guild()
-            # TODO: Max list size is 1000 discord wise
-            members = await server_obj.get_list_of_members()
-            logging.info("Checking server " + server_obj.name + " members: " + str(members))
-            user_ids = []
-            for member in members:
-                user_ids.append(str(member.user.id))
-            logging.info("User ids: " + str(user_ids))
-            # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
-            configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
-                                        & (   
-                                            (UserQ.fragment({"notifications_server_only" : False}))
-                                            | (UserQ.fragment({"notifications_server_id" : server_id}))
-                                        )
-                                        & ( 
-                                            UserQ.user.one_of(user_ids)
-                                        ))
+            # This game is only availible on this server so only look for users on this server
+            # This is a workaround. Normally we would get a list of all members on this server and only send the message to them. 
+            # But the code is restricted by discord. It would be: members = await server_obj.get_list_of_members()
+            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass, "notifications_server_id" : server_id}
         else:
-            # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
-            configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
-                                        & (   
-                                            (UserQ.fragment({"notifications_server_only" : False}))
-                                            | (UserQ.fragment({"notifications_server_id" : server_id}))
-                                        ))
+            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass}
         
+        # Also, the users we search for should either ignore server restrictions, or have the exact same server as us
+        configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
+                                    & (   
+                                          (UserQ.fragment({"notifications_server_only" : False}))
+                                        | (UserQ.fragment({"notifications_server_id" : server_id}))
+                                    ))
         for config in configs:
             # Send every user a private message
             user_id = config["user"]
             # Except the current user
-            # TODO
-            #if user_id == str(ctx.user.id):
-                #continue
+            if user_id == str(ctx.user.id):
+                continue
             user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
             user_obj._client = self.client._http
             logging.info("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + str(game_entry.get("code")))
