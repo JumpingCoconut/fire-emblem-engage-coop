@@ -745,10 +745,15 @@ class FeeCoop(interactions.Extension):
                 messagetext += " changed"
             if server_only != old_server_only:
                 messagetext += ", server_only is now: " + str(server_only)
-            elif server_only and (server_id != old_server_id):
+                if server_only:
+                    messagetext += " meaning you will ONLY get notifications about games created on this server"
+            if server_id != old_server_id:
                 if ctx.guild_id:
                     server_obj = await ctx.get_guild()
-                    messagetext += ", getting now updates only for new games on " + server_obj.name
+                    messagetext += ", home server set to " + server_obj.name + " so games which are only for this server will show up for you"
+                elif old_server_id:
+                    server_obj = await interactions.get(self.bot, interactions.Guild, object_id=old_server_id)
+                    messagetext += ", removed your old home server " + server_obj.name + " so you won't get updates specifically from that server anymore"
             if group_pass != old_group_pass:
                 if group_pass:
                     messagetext += ", watching only for group_pass " + group_pass + " now"
