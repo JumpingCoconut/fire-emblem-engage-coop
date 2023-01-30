@@ -240,17 +240,17 @@ class FeeCoop(interactions.Extension):
                 self.db.update({"status" : "abandoned"}, doc_ids=[entry.doc_id])
 
                 # Build an embed for the host to reinstate the game if needed
-                embed = await self.build_embed_for_game(ctx=ctx, doc_id=entry.doc_id)
+                embed = await self.build_embed_for_game(doc_id=entry.doc_id, show_private_information=True, for_server=None)
                 embed.description = "This game has been **abandoned** automatically because it has been inactive for a while now so it likely has already been finished. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
                 embed.description = embed.description[0:4096]
-                # Host gets the "create new game" button
-                button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
-                components = [[button_reinstate]]
 
                 # If this is the host, simple update message. If it is not the host, send the host a private message.
                 started_userid = turns[0]["user"]
                 started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
                 started_userobj._client = self.client._http
+
+                # Host gets the "create new game" button
+                components = await self.build_components_for_game(doc_id=entry.doc_id, for_user=started_userobj)
                 await started_userobj.send(embeds=[embed], components=components)
                     
 
@@ -412,8 +412,20 @@ class FeeCoop(interactions.Extension):
         logging.info("Sending reply")
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
-    # Can the user delete this game?
-    async def can_user_delete_game(self, ctx, doc_id):
+    # Is the user part of this game? Expects a doc_id and a ctx.user object
+    async def is_user_in_game(self, doc_id, user):
+        entry = self.db.get(doc_id=doc_id)
+        turns = entry.get("turns", [])
+        user_is_participant = False
+        user_is_host = False
+        if str(user.id) in [turn['user'] for turn in turns]:
+            user_is_participant = True
+            if (str(user.id) == turns[0]['user']):
+                user_is_host = True
+        return user_is_participant, user_is_host
+
+    # Can the user delete this game? Excpets a doc_id and a ctx.user object
+    async def can_user_delete_game(self, doc_id, user):
         entry = self.db.get(doc_id=doc_id)
         status = entry.get("status")
         if status != "open":
@@ -426,12 +438,7 @@ class FeeCoop(interactions.Extension):
         days_since_last_activity = (datetime.datetime.now() - timestamp).days
 
         # User owner or participant?
-        user_is_participant = False
-        user_is_host = False
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
-            user_is_participant = True
-            if (str(ctx.user.id) == turns[0]['user']):
-                user_is_host = True
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=user)
 
         # Allow to abandon the game? Host can abandon always, participants after one day
         if user_is_host or (user_is_participant and days_since_last_activity > 1):
@@ -443,65 +450,60 @@ class FeeCoop(interactions.Extension):
         return False
 
 
-    # Determines which buttons the user can see and returns them
-    async def build_components_for_game(self, ctx, doc_id):
+    # Determines which buttons the user can see and returns them. Parameter for_user expects a ctx.user object or nothing.
+    async def build_components_for_game(self, doc_id, for_user=None):
         components = None
         # Join - If the game is open and user didnt join already. Opens new modal with finished, lost and couldnt join
         # Abandon - If user is part of the group and game is old
+        # Reinstate - Hosts can revive abandoned games
 
         entry = self.db.get(doc_id=doc_id)
         status = entry.get("status")
         turns = entry.get("turns", [])
 
         # Abandoned games can be reinstated by the host
-        if status == "abandoned" and str(ctx.user.id) == turns[0]["user"]:
-            # Is the game ID still free?
-            code = entry.get("code")
-            game_search_fragment = {"code" : code, "status" : "open"}
-            GamesQ = Query()
-            games = self.db.search(GamesQ.fragment(game_search_fragment))
-            if (not games) or len(games) == 0:
-                # No open game with this code exists, host can make one
-                button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
-                return [[button_reinstate]]
+        if status == "abandoned":
+            if for_user and (str(for_user.id) == turns[0]["user"]):
+                # Is the game ID still free?
+                code = entry.get("code")
+                game_search_fragment = {"code" : code, "status" : "open"}
+                GamesQ = Query()
+                games = self.db.search(GamesQ.fragment(game_search_fragment))
+                if (not games) or len(games) == 0:
+                    # No open game with this code exists, host can make one
+                    button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
+                    components = [[button_reinstate]]
 
-        if status != "open":
-            return components
-        
-        # Old games can be deleted
-        delete_game_allowed = await self.can_user_delete_game(ctx=ctx, doc_id=doc_id)
+        elif status == "open":
+            # Join game - show it always, we only check later if the user is already in the game.
+            #if not user_is_participant:
+            button_join = Button(style=3, custom_id="join_game", label="Join", emoji=interactions.Emoji(name="⚔️"))
+            button_abandon = None
 
-        # Joining is only allowed if user is not in the game already
-        user_is_participant = False
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
-            user_is_participant = True
-        
-        button_join = None
-        button_abandon = None
-        
-        # Join game - show it always, we only check later if the user is already in the game.
-        #if not user_is_participant:
-        button_join = Button(style=3, custom_id="join_game", label="Join", emoji=interactions.Emoji(name="⚔️"))
+            if for_user:
+                # Old games can be deleted
+                delete_game_allowed = await self.can_user_delete_game(doc_id=doc_id, user=for_user)
 
-        # Allow to abandon the game? Host can abandon always, participants after one day
-        if delete_game_allowed:
-            if user_is_participant:
-                button_abandon = Button(style=4, custom_id="abandon_game", label="Remove from open game list", emoji=interactions.Emoji(name="🇽"))
+                # Joining is only allowed if user is not in the game already
+                user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=for_user)
+        
+                # Allow to abandon the game? Host can abandon always, participants after one day
+                if delete_game_allowed:
+                    if user_is_participant:
+                        button_abandon = Button(style=4, custom_id="abandon_game", label="Remove from open game list", emoji=interactions.Emoji(name="🇽"))
+                    else:
+                        button_abandon = Button(style=4, custom_id="abandon_game", label="Abandoned? Remove for EVERYONE", emoji=interactions.Emoji(name="⚠️"))
+
+            # Arrange buttons for discord neatly
+            if button_abandon:
+                components = spread_to_rows(button_join, button_abandon)
             else:
-                button_abandon = Button(style=4, custom_id="abandon_game", label="Abandoned? Remove for EVERYONE", emoji=interactions.Emoji(name="⚠️"))
-
-        # Arrange buttons for discord neatly
-        if button_join and button_abandon:
-            components = spread_to_rows(button_join, button_abandon)
-        elif button_join:
-            components = [[button_join]]
-        elif button_abandon:
-            components = [[button_abandon]]
+                components = [[button_join]]
         
         return components
 
     # Makes one embed for each given game ID
-    async def build_embed_for_game(self, ctx, doc_id):
+    async def build_embed_for_game(self, doc_id, show_private_information=False, for_server=None):
         entry = self.db.get(doc_id=doc_id)
         code = entry["code"]
         map = entry.get("map")
@@ -518,7 +520,7 @@ class FeeCoop(interactions.Extension):
                 started_serverobj = await interactions.get(self.bot, interactions.Guild, object_id=started_serverid)
             color = assign_color_to_user(started_userobj.username)
         else:
-            color = assign_color_to_user(ctx.user.username)
+            color = interactions.Color.white()
 
         title = code
         if status:
@@ -558,7 +560,7 @@ class FeeCoop(interactions.Extension):
             # Group pass beats server ID
             if group_pass:
                 # Show only to the host
-                if started_userid and (started_userid == ctx.user.id):
+                if show_private_information:
                     embed.set_footer(text="Group pass: " + group_pass)
                 else:
                     embed.set_footer(text="Group pass locked by " + started_userobj.username + "#" + started_userobj.discriminator)
@@ -570,7 +572,8 @@ class FeeCoop(interactions.Extension):
 
         if started_userid:
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid and ((not ctx.guild_id) or started_serverid != ctx.guild_id):
+            # Only show the host servername if we are not on the host server anyways
+            if started_serverid and ((not for_server) or (started_serverid != str(for_server))):
                 username += " (server " + started_serverobj.name + ")"
             # Note: Adding URLS to the users private DM channel like this would be nice but it isn't allowed by discord. url="https://discord.com/channels/@me/" + str(started_userobj.id)
             embed.set_author(name=username, icon_url=started_userobj.avatar_url)
@@ -636,7 +639,7 @@ class FeeCoop(interactions.Extension):
     # Fee mygames subcommand. Shows all games where the user participated
     @fee.subcommand(
         name="mygames",
-        description="Show open relay trials from Fire Emblem Engage",
+        description="Show relay trials you participated in",
         options=[
             interactions.Option(
                     name="only_open_games",
@@ -796,20 +799,21 @@ class FeeCoop(interactions.Extension):
             # Send every user a private message
             user_id = config["user"]
             # Except the current user
-            if user_id == str(ctx.user.id):
-                continue
+            # TODO remove this after testing
+            #if user_id == str(ctx.user.id):
+                #continue
             user_obj = await interactions.get(self.bot, interactions.User, object_id=user_id)
             user_obj._client = self.client._http
             logging.info("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + str(game_entry.get("code")))
             # Build embed and send it
-            embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+            embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=False, for_server=None)
             description_server_name = ""
             if ctx.guild_id:
                 server_obj = await ctx.get_guild()
                 description_server_name = " on server " + server_obj.name
             embed.description = "A new game has been created" + description_server_name + "! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
             embed.description = embed.description[0:4096]
-            components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+            components = await self.build_components_for_game(doc_id=doc_id, for_user=user_obj)
             return await user_obj.send(embeds=[embed], components=components)
 
     # Fee coop to show or create a game
@@ -843,8 +847,8 @@ class FeeCoop(interactions.Extension):
         GamesQ = Query()
         games = self.db.search(GamesQ.fragment(game_search_fragment))
         if (games) and len(games) > 0:
-            embed = await self.build_embed_for_game(ctx=ctx, doc_id=games[0].doc_id)
-            components = await self.build_components_for_game(ctx=ctx, doc_id=games[0].doc_id)
+            embed = await self.build_embed_for_game(doc_id=games[0].doc_id, show_private_information=False, for_server=ctx.guild_id)
+            components = await self.build_components_for_game(doc_id=games[0].doc_id, for_user=None)
             return await ctx.send(embeds=[embed], components=components, ephemeral=False)
         else:
             # Send the user a message so a new game can be created
@@ -899,7 +903,10 @@ class FeeCoop(interactions.Extension):
                 embed.set_footer(text="Group pass: " + group_pass)
             elif server_only:
                 embed.set_footer(text="Only for server: " + server_obj.name, icon_url=server_obj.icon_url)
-            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
+            ephemeral = False
+            if group_pass:
+                ephemeral = True
+            return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
         
    # Join the game
     @interactions.extension_component("join_game")
@@ -941,7 +948,7 @@ class FeeCoop(interactions.Extension):
             added_description += "\nPlease note that the game opener only wants users with a group pass to join."
         added_description += "\n\nOnce you finished your turns, please use the buttons below to update the game status."
 
-        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=False, for_server=ctx.guild_id)
         embed.description = added_description + "\n\n\n" + embed.description
         embed.description = embed.description[0:4096]
 
@@ -978,7 +985,7 @@ class FeeCoop(interactions.Extension):
             turns = entry.get("turns")
             turns[-1]["timestamp"] = datetime.datetime.utcnow().isoformat()
             self.db.update({"status" : "open", "turns": turns}, doc_ids=[doc_id])
-            embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+            embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=ctx.guild_id)
             return await ctx.send(embeds=[embed], ephemeral=True)
         elif code:
             await ctx.defer()
@@ -1019,8 +1026,9 @@ class FeeCoop(interactions.Extension):
             await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
 
             # Now show that a new game was added
-            embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
-            components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
+            embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=False, for_server=ctx.guild_id)
+            components = await self.build_components_for_game(doc_id=doc_id, for_user=None)
+
             return await ctx.send(embeds=[embed], components=components, ephemeral=False)
         else:
             return await ctx.send("Creating new game failed.", ephemeral=True)
@@ -1037,7 +1045,7 @@ class FeeCoop(interactions.Extension):
             return await ctx.send("Could not find open game, maybe it was finished meanwhile?", ephemeral=True)
 
         # Game deletion allowed?
-        delete_game_allowed = await self.can_user_delete_game(ctx=ctx, doc_id=doc_id)
+        delete_game_allowed = await self.can_user_delete_game(doc_id=doc_id, user=ctx.user)
         if not delete_game_allowed:
             return await ctx.send("Not allowed to remove the game! The players have a few days to finish this. If no activity is found after a few days, you can try deleting it again.", ephemeral=True)
 
@@ -1045,12 +1053,11 @@ class FeeCoop(interactions.Extension):
         self.db.update({"status" : "abandoned"}, doc_ids=[doc_id])
 
         # Build an embed for the host to reinstate the game if needed
-        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=None)
         embed.description = "This game has been **abandoned** on the request of **" + ctx.user.username + "#" + ctx.user.discriminator + "**. This can happen if the game has been inactive for a while.\n\n\n" + embed.description
         embed.description = embed.description[0:4096]
         # Host gets the "create new game" button
-        button_reinstate = Button(style=3, custom_id="reinstate_game", label="Reinstate Game", emoji=interactions.Emoji(name="👼"))
-        components = [[button_reinstate]]
+        components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
 
         # If this is the host, simple update message. If it is not the host, send the host a private message.
         entry = self.db.get(doc_id=doc_id)
@@ -1061,7 +1068,7 @@ class FeeCoop(interactions.Extension):
         except:
             pass
         if str(ctx.user.id) == started_userid:
-            return await ctx.send(embeds=[embed], components=components)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
         else:
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             started_userobj._client = self.client._http
@@ -1110,7 +1117,7 @@ class FeeCoop(interactions.Extension):
         self.db.update({"turns" : turns}, doc_ids=[doc_id])
 
         # Build an embed with the new game data
-        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
+        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=False, for_server=None)
 
         # Add a picture if the game is fininshed, either way
         files = None
@@ -1150,9 +1157,8 @@ class FeeCoop(interactions.Extension):
     async def game_ongoing(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
         # User already in the game?
-        entry = self.db.get(doc_id=doc_id)
-        turns = entry.get("turns", [])
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
+        if user_is_participant:
             return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="open")
 
@@ -1161,9 +1167,8 @@ class FeeCoop(interactions.Extension):
     async def game_success(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
         # User already in the game?
-        entry = self.db.get(doc_id=doc_id)
-        turns = entry.get("turns", [])
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
+        if user_is_participant:
             return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="success")
 
@@ -1172,9 +1177,8 @@ class FeeCoop(interactions.Extension):
     async def game_over(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
         # User already in the game?
-        entry = self.db.get(doc_id=doc_id)
-        turns = entry.get("turns", [])
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
+        if user_is_participant:
             return await ctx.send("You have arleady participated in the game.", ephemeral=True)
         return await self.update_game(ctx=ctx, doc_id=doc_id, new_status="finished")
 
@@ -1187,13 +1191,13 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("show_game_docid")
     async def show_game_docid(self, ctx, value):
         doc_id = value[0]
-        embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
-        components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
         # Discord sets the flag 64 on ephemeral messages
         if ctx.message.flags == 64:
             ephemeral = True
         else:
             ephemeral = False
+        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
+        components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
     # Select menu creating new game from mapid
@@ -1236,11 +1240,11 @@ class FeeCoop(interactions.Extension):
             options = []
             components = None
             for result in results:
-                embed = await self.build_embed_for_game(doc_id=result.doc_id, ctx=ctx)
+                embed = await self.build_embed_for_game(doc_id=result.doc_id, show_private_information=False, for_server=ctx.guild_id)
                 found_games.append(embed)
                 if len(results) == 1:
                     # Just one game? Allow to join immediatly
-                    components = await self.build_components_for_game(ctx=ctx, doc_id=result.doc_id)
+                    components = await self.build_components_for_game(doc_id=result.doc_id, for_user=ctx.user)
                 else:
                     # Multiple games? Then build a select menu for joining one
                     map = result.get("map")
