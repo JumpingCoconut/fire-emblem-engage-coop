@@ -1029,10 +1029,13 @@ class FeeCoop(interactions.Extension):
             await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
 
             # Now show that a new game was added
-            embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=False, for_server=ctx.guild_id)
+            ephemeral = False
+            if group_pass:
+                ephemeral = True 
+            embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
             components = await self.build_components_for_game(doc_id=doc_id, for_user=None)
 
-            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
         else:
             return await ctx.send("Creating new game failed.", ephemeral=True)
 
