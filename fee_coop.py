@@ -740,7 +740,7 @@ class FeeCoop(interactions.Extension):
             else:
                 messagetext += " changed"
             if server_only != old_server_only:
-                messagetext += ". You set server_only to: " + str(server_only)
+                messagetext += ". You set server_only to " + str(server_only)
                 if server_only:
                     messagetext += ", meaning you will **only** get notifications about games created on this server and no notifications about games from all other servers"
                 else:
@@ -1082,6 +1082,9 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("reinstate_game")
     async def fee_reinstate_game(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="abandoned")
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
+        if not user_is_host:
+            return await ctx.send("Only the host can reinstate this old game.", ephemeral=True)
         return await self.create_new_game(ctx=ctx, doc_id=doc_id)
 
     # Update the games status
