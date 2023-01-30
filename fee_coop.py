@@ -714,10 +714,6 @@ class FeeCoop(interactions.Extension):
             # If we have no server, the user can not listen to only games from this server
             server_only = False
 
-        # Server ID is not needed if we don't want to listen to only one server
-        if not server_only:
-            server_id = ""
-
         # Deactivate notification
         if not active:
             if old_active:
