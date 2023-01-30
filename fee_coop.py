@@ -781,9 +781,11 @@ class FeeCoop(interactions.Extension):
         if server_only:
             # This game is only availible on this server so only look for users who are on this server
             server_obj = await ctx.get_guild()
-            logging.info("Checking server " + server_obj.name + " members: " + str(server_obj.members))
+            # TODO: Max list size is 1000 discord wise
+            members = await server_obj.get_list_of_members()
+            logging.info("Checking server " + server_obj.name + " members: " + str(members))
             user_ids = []
-            for member in server_obj.members:
+            for member in members:
                 user_ids.append(str(member.user.id))
             logging.info("User ids: " + str(user_ids))
             # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
@@ -793,7 +795,7 @@ class FeeCoop(interactions.Extension):
                                             | (UserQ.fragment({"notifications_server_id" : server_id}))
                                         )
                                         & ( 
-                                            UserQ.user.one_of(member_ids)
+                                            UserQ.user.one_of(user_ids)
                                         ))
         else:
             # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
