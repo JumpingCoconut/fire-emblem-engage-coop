@@ -740,21 +740,23 @@ class FeeCoop(interactions.Extension):
             else:
                 messagetext += " changed"
             if server_only != old_server_only:
-                messagetext += ", server_only is now: " + str(server_only)
+                messagetext += ". You set server_only to: " + str(server_only)
                 if server_only:
-                    messagetext += " meaning you will ONLY get notifications about games created on this server"
+                    messagetext += ", meaning you will **only** get notifications about games created on this server and no notifications about games from all other servers"
+                else:
+                    messagetext += ", meaning you will get notifiations from all servers who chose to share them with everyone"
             if server_id != old_server_id:
                 if ctx.guild_id:
                     server_obj = await ctx.get_guild()
-                    messagetext += ", home server set to " + server_obj.name + " so games which are only for this server will show up for you"
+                    messagetext += ". Home server set to " + server_obj.name + ", so games which are only intended for this server will show up for you, too"
                 elif old_server_id:
                     server_obj = await interactions.get(self.bot, interactions.Guild, object_id=old_server_id)
-                    messagetext += ", removed your old home server " + server_obj.name + " so you won't get updates specifically from that server anymore"
+                    messagetext += ". Removed your old home server " + server_obj.name + " so you won't get updates for server-internal games from there anymore"
             if group_pass != old_group_pass:
                 if group_pass:
-                    messagetext += ", watching only for group_pass " + group_pass + " now"
+                    messagetext += ". Watching only for group_pass " + group_pass + " now"
                 else:
-                    messagetext += ", ignoring previous group pass \"" + old_group_pass + "\" now"
+                    messagetext += ". Ignoring previous group pass \"" + old_group_pass + "\" now"
             messagetext += "."
             return await ctx.send(messagetext, ephemeral=True)
 
