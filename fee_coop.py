@@ -703,13 +703,17 @@ class FeeCoop(interactions.Extension):
         if group_pass:
             server_only = False
 
-        # Server ID so we know if the user can be informed by games which only want a certain server
+        # Server ID if the user wants only infos from one server
         server_id = ""
         if ctx.guild_id:
             server_id = str(ctx.guild_id)
         else:
             # If we have no server, the user can not listen to only games from this server
             server_only = False
+
+        # Server ID is not needed if we don't want to listen to only one server
+        if not server_only:
+            server_id = ""
 
         # Deactivate notification
         if not active:
@@ -737,13 +741,11 @@ class FeeCoop(interactions.Extension):
             else:
                 messagetext += " changed"
             if server_only != old_server_only:
-                messagetext += ", server_only: " + str(server_only)
-            if server_id != old_server_id:
+                messagetext += ", server_only is now: " + str(server_only)
+            elif server_only and (server_id != old_server_id):
                 if ctx.guild_id:
                     server_obj = await ctx.get_guild()
-                    messagetext += ", getting now updates for all games on " + server_obj.name
-                else:
-                    messagetext += ", no server specific updates anymore"
+                    messagetext += ", getting now updates only for new games on " + server_obj.name
             if group_pass != old_group_pass:
                 if group_pass:
                     messagetext += ", watching only for group_pass " + group_pass + " now"
@@ -774,20 +776,33 @@ class FeeCoop(interactions.Extension):
         # Find users who want to get informed
         user_config = self.db.table("user_config")
         UserQ = Query()
-        entry = user_config.get(UserQ.user == str(ctx.user.id))
-        user_search_fragment = {}
+        # Everyone who has notifications active and the same group pass (default group pass is "")
+        user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass}
         if server_only:
-            # This game is only availible on this server so only look for users with this server
-            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass, "notifications_server_id" : server_id}
+            # This game is only availible on this server so only look for users who are on this server
+            server_obj = await ctx.get_guild()
+            logging.info("Checking server " + server_obj.name + " members: " + str(server_obj.members))
+            member_ids = []
+            for member in server_obj.members:
+                member_ids.append(str(member.id))
+            logging.info("Member ids: " + str(member_ids))
+            # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
+            configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
+                                        & (   
+                                            (UserQ.fragment({"notifications_server_only" : False}))
+                                            | (UserQ.fragment({"notifications_server_id" : server_id}))
+                                        )
+                                        & ( 
+                                            UserQ.user.one_of(member_ids)
+                                        ))
         else:
-            user_search_fragment = {"notifications_active" : True, "notifications_group_pass" : group_pass}
+            # Sometimes users only want messages from certain servers. Send message to users who listen to this server, and to everyone who doesnt care for server.
+            configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
+                                        & (   
+                                            (UserQ.fragment({"notifications_server_only" : False}))
+                                            | (UserQ.fragment({"notifications_server_id" : server_id}))
+                                        ))
         
-        # Also, the users we search for should either ignore server restrictions, or have the exact same server as us
-        configs = user_config.search(   (UserQ.fragment(user_search_fragment)) 
-                                    & (   
-                                          (UserQ.fragment({"notifications_server_only" : False}))
-                                        | (UserQ.fragment({"notifications_server_id" : server_id}))
-                                    ))
         for config in configs:
             # Send every user a private message
             user_id = config["user"]
@@ -799,7 +814,11 @@ class FeeCoop(interactions.Extension):
             logging.info("Informing user " + user_obj.username + "#" + user_obj.discriminator + " about new game " + str(game_entry.get("code")))
             # Build embed and send it
             embed = await self.build_embed_for_game(ctx=ctx, doc_id=doc_id)
-            embed.description = "A new game has been created! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
+            description_server_name = ""
+            if ctx.guild_id:
+                server_obj = await ctx.get_guild()
+                description_server_name = " on server " + server_obj.name
+            embed.description = "A new game has been created" + description_server_name + "! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
             embed.description = embed.description[0:4096]
             components = await self.build_components_for_game(ctx=ctx, doc_id=doc_id)
             return await user_obj.send(embeds=[embed], components=components)
