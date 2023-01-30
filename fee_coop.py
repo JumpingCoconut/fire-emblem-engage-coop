@@ -991,7 +991,12 @@ class FeeCoop(interactions.Extension):
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=ctx.guild_id)
             return await ctx.send(embeds=[embed], ephemeral=True)
         elif code:
-            await ctx.defer()
+            # Group pass locked games dont show public
+            ephemeral = False
+            if group_pass:
+                ephemeral = True 
+                
+            await ctx.defer(ephemeral)
             game_search_fragment = {"code" : code, "status" : "open"}
             GamesQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment))
@@ -1029,9 +1034,6 @@ class FeeCoop(interactions.Extension):
             await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
 
             # Now show that a new game was added
-            ephemeral = False
-            if group_pass:
-                ephemeral = True 
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
             components = await self.build_components_for_game(doc_id=doc_id, for_user=None)
 
