@@ -1,4 +1,4 @@
-# fire-emblem-engage-coop
+# Sommie, the Fire Emblem Engage coop Discord bot for Relay Trials
 Discord bot for Fire Emblem Engage coop play. It is open source but I recommend you to just invite the existing bot, so we can share a database of open lobbies and not seperate further.
 
 Invite to your server with https://discord.com/api/oauth2/authorize?client_id=1068580872162377780&permissions=414464731200&scope=bot
