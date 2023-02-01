@@ -659,6 +659,7 @@ class FeeCoop(interactions.Extension):
         return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
 
     # Fee notifications turns on private messages for the user when a new game is created
+    # ATTENTION: To avoid spam, server_only is now true by default. Nobody getting notifs about EVERYTHING now.
     @fee.subcommand(
         name="notifications",
         description="Turn on or off notifications for new games",
@@ -669,12 +670,12 @@ class FeeCoop(interactions.Extension):
                         type=interactions.OptionType.BOOLEAN,
                         required=True,
                 ),
-                interactions.Option(
-                        name="server_only",
-                        description="For ALL new games or just from this server?",
-                        type=interactions.OptionType.BOOLEAN,
-                        required=True,
-                ),
+                # interactions.Option(
+                #         name="server_only",
+                #         description="For ALL new games or just from this server?",
+                #         type=interactions.OptionType.BOOLEAN,
+                #         required=True,
+                # ),
                 interactions.Option(
                         name="group_pass",
                         description="Only watch a certain group pass (ignores server restrictions)",
@@ -686,8 +687,12 @@ class FeeCoop(interactions.Extension):
                 ),
             ]
         )
-    async def fee_notifications(self, ctx: interactions.CommandContext, active=True, server_only=True, group_pass=""):
+    # async def fee_notifications(self, ctx: interactions.CommandContext, active=True, server_only=True, group_pass=""):
+    async def fee_notifications(self, ctx: interactions.CommandContext, active=True, group_pass=""):
         logging.info("Fee notifications by " + ctx.user.username + "#" + ctx.user.discriminator)
+
+        # For now, act as if server_only is always on
+        server_only = True
 
         # Does a setting exist already?
         user_config = self.db.table("user_config")
@@ -748,7 +753,7 @@ class FeeCoop(interactions.Extension):
                     messagetext += ", meaning you will **only** get notifications about games created on this server and no notifications about games from all other servers"
                 else:
                     messagetext += ", meaning you will get notifiations from all servers who chose to share them with everyone"
-            if server_id != old_server_id:
+            if server_id != old_server_id and (not group_pass):
                 if ctx.guild_id:
                     server_obj = await ctx.get_guild()
                     messagetext += ". Home server set to " + server_obj.name + ", so games which are only intended for this server will show up for you, too"
@@ -920,13 +925,23 @@ class FeeCoop(interactions.Extension):
     # Autocompletion for the parameter "group_pass". Searches for previous group passes of that user and shows them
     @interactions.extension_autocomplete(command="fee", name="group_pass")
     async def autocomplete_group_pass(self, ctx, user_input: str = ""):
+        options = []
+
+        # If the user has set a group pass to be notified about, that is probably the users favorite group pass, show it first
+        user_config = self.db.table("user_config")
+        UserQ = Query()
+        entry = user_config.get(UserQ.user == str(ctx.user.id))
+        if entry:
+            notifications_group_pass = entry.get("notifications_group_pass", "")
+            if notifications_group_pass:
+                options.append(interactions.Choice(name=notifications_group_pass, value=notifications_group_pass))
+          
         # Get a list of all games which have a group pass, and where the user participated in
         GamesQ = Query()
         TurnsQ = Query()
         games = self.db.search((GamesQ.group_pass != "") & (GamesQ.status != "abandoned") & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
 
         # Now just check all these games for the group passes
-        options = []
         group_passes = []        
         logging.info("Autocomplete group pass..." + str(user_input) + " " + str(len(games)))
         for entry in games:
