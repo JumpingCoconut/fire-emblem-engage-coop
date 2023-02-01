@@ -937,7 +937,7 @@ class FeeCoop(interactions.Extension):
             logging.info("Group pass found " + str(group_pass))
             if group_pass not in group_passes:
                 if user_input in group_pass:
-                    group_passes.add(group_pass)
+                    group_passes.append(group_pass)
                     options.append(interactions.Choice(name=group_pass, value=group_pass))
 
         await ctx.populate(options)
