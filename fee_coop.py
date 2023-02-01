@@ -234,6 +234,8 @@ class FeeCoop(interactions.Extension):
             timestamp = datetime.datetime.fromisoformat(last_activity)
             days_since_last_activity = (datetime.datetime.now() - timestamp).days
 
+            logging.info("Purge_old_entries: Game is " + str(days_since_last_activity) + " days old.")
+
             # Older than 1 day? Remove and tell the owner that he can add it again anytime
             if days_since_last_activity > 1:
                 # Update game status
@@ -251,6 +253,7 @@ class FeeCoop(interactions.Extension):
 
                 # Host gets the "create new game" button
                 components = await self.build_components_for_game(doc_id=entry.doc_id, for_user=started_userobj)
+                logging.info("Purge_old_entries: Sending private message to " +  started_userobj.username + "#" + started_userobj.discriminator)
                 await started_userobj.send(embeds=[embed], components=components)
                     
 
@@ -329,7 +332,6 @@ class FeeCoop(interactions.Extension):
         sorted_games = sorted(games, key=sort_by_timestamp,reverse=reverse_sort)
         description = ""
         options = []
-        logging.info("Len is " + str(len(sorted_games)))
         for entry in sorted_games:
             turns = entry.get("turns", [])
             # Some games don't want to be seen unless they are on a specific server.
@@ -342,7 +344,6 @@ class FeeCoop(interactions.Extension):
                 if this_server_id != game_server_id:
                     continue
             
-            logging.info("Adding game")
             # First line: Code and map
             code = entry["code"]
             if not status:
@@ -389,7 +390,6 @@ class FeeCoop(interactions.Extension):
                                                 emoji=emoji
                                                 )
                                             )
-            logging.info("Game added " + code)
 
             # Max length
             if len(description) >= 4096:
@@ -409,7 +409,6 @@ class FeeCoop(interactions.Extension):
                     options=options,
                 )
             components = [[s1]]
-        logging.info("Sending reply")
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
 
     # Is the user part of this game? Expects a doc_id and a ctx.user object
@@ -620,6 +619,7 @@ class FeeCoop(interactions.Extension):
                     min_length=0,
                     max_length=100,
                     required=False,
+                    autocomplete=True,
             ),
             interactions.Option(
                     name="show_public",
@@ -679,7 +679,10 @@ class FeeCoop(interactions.Extension):
                         name="group_pass",
                         description="Only watch a certain group pass (ignores server restrictions)",
                         type=interactions.OptionType.STRING,
+                        min_length=0,
+                        max_length=100,
                         required=False,
+                        autocomplete=True,
                 ),
             ]
         )
@@ -816,6 +819,7 @@ class FeeCoop(interactions.Extension):
             embed.description = "A new game has been created" + description_server_name + "! You get this message because you turned **notifications on**. To deactivate notifications, reply with using this command:\n\n``/fee notifications``\n\n\n" + embed.description
             embed.description = embed.description[0:4096]
             components = await self.build_components_for_game(doc_id=doc_id, for_user=user_obj)
+            logging.info("Notify_users: Sending private message to " + user_obj.username + "#" + user_obj.discriminator)
             return await user_obj.send(embeds=[embed], components=components)
 
     # Fee coop to show or create a game
@@ -840,7 +844,10 @@ class FeeCoop(interactions.Extension):
                         name="group_pass",
                         description="Create a new game just for everyone who enters this passphrase later",
                         type=interactions.OptionType.STRING,
+                        min_length=0,
+                        max_length=100,
                         required=False,
+                        autocomplete=True,
                 ),
             ]
         )
@@ -910,6 +917,32 @@ class FeeCoop(interactions.Extension):
                 ephemeral = True
             return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
         
+    # Autocompletion for the parameter "group_pass". Searches for previous group passes of that user and shows them
+    @interactions.extension_autocomplete(command="fee", name="group_pass")
+    async def autocomplete_group_pass(self, ctx, user_input: str = ""):
+        # First option is always to give no group pass at all
+        options = []
+        options.append(interactions.Choice(name="", value=""))
+
+        # Get a list of all games which have a group pass, and where the user participated in
+        GamesQ = Query()
+        TurnsQ = Query()
+        games = self.db.search((GamesQ.group_pass != "") & (GamesQ.status != "abandoned") & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
+
+        # Now just check all these games for the group passes
+        group_passes = []        
+        for entry in games:
+            # Maximum of 25 results are allowed in discord. 
+            if len(options) >= 25:
+                break
+            group_pass = entry.get("group_pass")
+            if group_pass not in group_passes:
+                if user_input in group_pass:
+                    group_passes.add(group_pass)
+                    options.append(interactions.Choice(name=group_pass, value=group_pass))
+
+        await ctx.populate(options)
+
    # Join the game
     @interactions.extension_component("join_game")
     async def fee_join_game(self, ctx):
@@ -1079,6 +1112,7 @@ class FeeCoop(interactions.Extension):
         else:
             started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             started_userobj._client = self.client._http
+            logging.info("Fee_abandon_game: Sending private message to " + started_userobj.username + "#" + started_userobj.discriminator)
             await started_userobj.send(embeds=[embed], components=components)
             return await ctx.send("Game abandoned. The host can reinstate the game anytime if desired.", ephemeral=True)        
 
@@ -1148,6 +1182,7 @@ class FeeCoop(interactions.Extension):
                     description=str("Fee coop file")
                     )
                 files = [fxy]
+                logging.info("Update_game: Sending private message to " + userobj.username + "#" + userobj.discriminator)
                 await userobj.send(embeds=[embed], files=files)
 
             # We have to provide the file again and again for every single send
