@@ -39,6 +39,84 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
+        add_testusers = False
+        if add_testusers:
+            # Quickly addding friends
+            user_config = self.db.table("user_config")
+            UserQ = Query()
+            # JCoconut
+            new_entry = {   
+                            "user" : "330955309763788800",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "563903641631719429",
+                            "notifications_group_pass" : "11118888"
+                        }
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            # Deej
+            new_entry = {   
+                            "user" : "523211690213376005",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "563903641631719429",
+                            "notifications_group_pass" : "11118888"
+                        }
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            # NL
+            new_entry = {   
+                            "user" : "464342606898397186",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "563903641631719429",
+                            "notifications_group_pass" : "11118888"
+                        }
+            # Valharke
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            new_entry = {   
+                            "user" : "745642457101893643",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "563903641631719429",
+                            "notifications_group_pass" : "11118888"
+                        }
+            # Eri
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            new_entry = {   
+                            "user" : "211526001354735618",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "737637662764171375",
+                            "notifications_group_pass" : "11118888"
+                        }
+            # Kambe
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            new_entry = {   
+                            "user" : "535900115483885581",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "737637662764171375",
+                            "notifications_group_pass" : "11118888"
+                        }
+            # Levo
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            new_entry = {   
+                            "user" : "404597649585471490",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "563903641631719429",
+                            "notifications_group_pass" : "11118888"
+                        }
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))
+            # Thaissing
+            new_entry = {   
+                            "user" : "210436307032342528",
+                            "notifications_active" : True, 
+                            "notifications_server_only" : False, 
+                            "notifications_server_id" : "737637662764171375",
+                            "notifications_group_pass" : "11118888"
+                        }
+            user_config.upsert(new_entry, UserQ.user == str(new_entry["user"]))        
+            
         add_testdata = False
         if add_testdata:
             # Test data
@@ -925,7 +1003,9 @@ class FeeCoop(interactions.Extension):
     # Autocompletion for the parameter "group_pass". Searches for previous group passes of that user and shows them
     @interactions.extension_autocomplete(command="fee", name="group_pass")
     async def autocomplete_group_pass(self, ctx, user_input: str = ""):
+        logging.info("Autocomplete group pass by " + ctx.user.username + "#" + ctx.user.discriminator + " for " + str(user_input))
         options = []
+        added_group_passes = []  
 
         # If the user has set a group pass to be notified about, that is probably the users favorite group pass, show it first
         user_config = self.db.table("user_config")
@@ -934,6 +1014,7 @@ class FeeCoop(interactions.Extension):
         if entry:
             notifications_group_pass = entry.get("notifications_group_pass", "")
             if notifications_group_pass:
+                added_group_passes.append(notifications_group_pass)
                 options.append(interactions.Choice(name=notifications_group_pass, value=notifications_group_pass))
           
         # Get a list of all games which have a group pass, and where the user participated in
@@ -942,17 +1023,14 @@ class FeeCoop(interactions.Extension):
         games = self.db.search((GamesQ.group_pass != "") & (GamesQ.status != "abandoned") & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
 
         # Now just check all these games for the group passes
-        group_passes = []        
-        logging.info("Autocomplete group pass..." + str(user_input) + " " + str(len(games)))
         for entry in games:
             # Maximum of 25 results are allowed in discord. 
             if len(options) >= 25:
                 break
             group_pass = entry.get("group_pass")
-            logging.info("Group pass found " + str(group_pass))
-            if group_pass not in group_passes:
+            if group_pass not in added_group_passes:
                 if user_input in group_pass:
-                    group_passes.append(group_pass)
+                    added_group_passes.append(group_pass)
                     options.append(interactions.Choice(name=group_pass, value=group_pass))
 
         await ctx.populate(options)
