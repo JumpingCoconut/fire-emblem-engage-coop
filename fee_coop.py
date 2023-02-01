@@ -920,16 +920,13 @@ class FeeCoop(interactions.Extension):
     # Autocompletion for the parameter "group_pass". Searches for previous group passes of that user and shows them
     @interactions.extension_autocomplete(command="fee", name="group_pass")
     async def autocomplete_group_pass(self, ctx, user_input: str = ""):
-        # First option is always to give no group pass at all
-        options = []
-        options.append(interactions.Choice(name="", value=""))
-
         # Get a list of all games which have a group pass, and where the user participated in
         GamesQ = Query()
         TurnsQ = Query()
         games = self.db.search((GamesQ.group_pass != "") & (GamesQ.status != "abandoned") & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
 
         # Now just check all these games for the group passes
+        options = []
         group_passes = []        
         for entry in games:
             # Maximum of 25 results are allowed in discord. 
