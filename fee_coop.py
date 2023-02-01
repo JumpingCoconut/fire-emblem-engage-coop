@@ -928,11 +928,13 @@ class FeeCoop(interactions.Extension):
         # Now just check all these games for the group passes
         options = []
         group_passes = []        
+        logging.info("Autocomplete group pass..." + str(user_input) + " " + str(len(games)))
         for entry in games:
             # Maximum of 25 results are allowed in discord. 
             if len(options) >= 25:
                 break
             group_pass = entry.get("group_pass")
+            logging.info("Group pass found " + str(group_pass))
             if group_pass not in group_passes:
                 if user_input in group_pass:
                     group_passes.add(group_pass)
