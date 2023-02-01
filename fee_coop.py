@@ -39,7 +39,7 @@ class FeeCoop(interactions.Extension):
         # Active games from database
         self.db = TinyDB('db.json')
 
-        add_testusers = True
+        add_testusers = False
         if add_testusers:
             # Quickly addding friends
             user_config = self.db.table("user_config")
