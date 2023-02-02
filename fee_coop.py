@@ -398,8 +398,8 @@ class FeeCoop(interactions.Extension):
         def sort_by_timestamp(game):
             turns = game['turns']
             if turns:
-                timestamp_str = turns[0]['timestamp']
-                timestamp = datetime.datetime.fromisoformat(timestamp_str)
+                last_activity = turns[-1]['timestamp']
+                timestamp = datetime.datetime.fromisoformat(last_activity)
                 return timestamp
             else:
                 return datetime.datetime.max
