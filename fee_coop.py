@@ -77,10 +77,10 @@ class FeeCoop(interactions.Extension):
             timestamp = datetime.datetime.fromisoformat(last_activity)
             days_since_last_activity = (datetime.datetime.now() - timestamp).days
 
-            logging.info("Purge_old_entries: Game is " + str(days_since_last_activity) + " days old.")
-
             # Older than 1 day? Remove and tell the owner that he can add it again anytime
             if days_since_last_activity > 1:
+                logging.info("Purge_old_entries: Game is " + str(days_since_last_activity) + " days old.")
+                
                 # Update game status
                 self.db.update({"status" : "abandoned"}, doc_ids=[entry.doc_id])
 
@@ -89,7 +89,7 @@ class FeeCoop(interactions.Extension):
                 embed.description = "This game has been **abandoned** automatically because it has been inactive for a while now so it likely has already been finished. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
                 embed.description = embed.description[0:4096]
 
-                # If this is the host, simple update message. If it is not the host, send the host a private message.
+                # Get the host object to send a private message
                 started_userid = turns[0]["user"]
                 started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
                 started_userobj._client = self.client._http
