@@ -1098,6 +1098,9 @@ class FeeCoop(interactions.Extension):
             ephemeral = True
         else:
             ephemeral = False
+
+        # For now: Always ephemeral
+        ephemeral = True
         embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
         components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
