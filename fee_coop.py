@@ -194,6 +194,13 @@ class FeeCoop(interactions.Extension):
                 code += " (" + entry.get("status") + ")"
             if for_user and entry.get("group_pass"):
                 code += " (group pass locked)"
+            # If its the open game list, but ephemeral so only one user can see it anyways, might as well mark joined games 
+            # TODO In future, this should be always checked and these games shouldnt appear in first place. Only makes sense after we have /fee pinboard though.
+            #      Once /fee pinboard exists, we make this open list function to ephemeral only.
+            if (not for_user) and ephemeral:
+                user_is_participant, user_is_host = await self.is_user_in_game(doc_id=entry.doc_id, user=ctx.user)
+                if user_is_participant:
+                    code += " (already joined)"
 
             map = entry.get("map")
             difficulty = self.mapdata[map]["difficulty"]
