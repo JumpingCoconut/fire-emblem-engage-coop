@@ -680,6 +680,7 @@ class FeeCoop(interactions.Extension):
                         description="Relay Trial ID. You get it in the Tower of Trials after opening a game.",
                         min_length=3,
                         type=interactions.OptionType.STRING,
+                        autocomplete=True,
                         required=True,
                 ),
                 interactions.Option(
@@ -700,6 +701,7 @@ class FeeCoop(interactions.Extension):
             ]
         )
     async def fee_coop(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass=""):
+        code = code.upper()
         game_search_fragment = {"code" : code, "status" : "open"}
         GamesQ = Query()
         games = self.db.search(GamesQ.fragment(game_search_fragment))
@@ -797,6 +799,35 @@ class FeeCoop(interactions.Extension):
                 if user_input in group_pass:
                     added_group_passes.append(group_pass)
                     options.append(interactions.Choice(name=group_pass, value=group_pass))
+
+        await ctx.populate(options)
+
+    # Autocompletion for the parameter "code". Searches open game IDs and tries to autocomplete them
+    @interactions.extension_autocomplete(command="fee", name="code")
+    async def autocomplete_code(self, ctx, user_input: str = ""):
+        logging.info("Autocomplete code by " + ctx.user.username + "#" + ctx.user.discriminator + " for " + str(user_input))
+        options = []
+
+        # Before we read all open codes, check if the user belongs to a certain group pass
+        user_config = self.db.table("user_config")
+        UserQ = Query()
+        entry = user_config.get(UserQ.user == str(ctx.user.id))
+        notifications_group_pass = ""
+        if entry:
+            notifications_group_pass = entry.get("notifications_group_pass", "")
+
+        # Get a list of all open games which either have no group pass, or the default group pass
+        GamesQ = Query()
+        games = self.db.search(((GamesQ.group_pass == "") | (GamesQ.group_pass == notifications_group_pass)) & (GamesQ.status == "open"))
+
+        # Now just check all these games for the group passes
+        for entry in games:
+            # Maximum of 25 results are allowed in discord. 
+            if len(options) >= 25:
+                break
+            code = entry.get("code")
+            if user_input.upper() in code.upper():
+                options.append(interactions.Choice(name=code, value=code))
 
         await ctx.populate(options)
 
