@@ -217,7 +217,7 @@ class FeeCoop(interactions.Extension):
             utc_time = calendar.timegm(timestamp.utctimetuple())
             last_activity_discordstring = "<t:" + str(utc_time) + ":R>"
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid != this_server_id:
+            if started_serverid and (started_serverid != this_server_id):
                 username += " (server " + started_serverobj.name + ")"
             description += "*by user " + username + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players, " + last_activity_discordstring + "*\n\n"
 
