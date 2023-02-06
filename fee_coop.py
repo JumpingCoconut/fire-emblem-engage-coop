@@ -824,17 +824,11 @@ class FeeCoop(interactions.Extension):
             replace_message = True
             try:
                 message_obj = await interactions.get(self.bot, interactions.Message, object_id=message_id, parent_id=channel_id)
-            except interactions.api.LibraryException:
-                # The message doesnt exist anymore, write a new one in the same channel later.
-                message_obj = None
-                replace_message = False
-            try:
                 channel_obj = await interactions.get(self.bot, interactions.Channel, object_id=channel_id)
             except interactions.api.LibraryException:
-                # If the channel doesnt exist anymore, nothing we can do. Remove entry from database
-                logging.info("update_pinboards: Channel of the pinboard message was deleted, removing from database. Old channel: " + str(channel_id))
+                # The message doesnt exist anymore, remove from database.
+                logging.info("update_pinboards: Pinboard message or channel was deleted, removing from update list.")
                 pinboard_messages.remove(doc_ids=[pinboard.doc_id])
-                continue
             
             # Get the parameters of this pinboard
             server_only = pinboard.get("pinboards_server_only")
