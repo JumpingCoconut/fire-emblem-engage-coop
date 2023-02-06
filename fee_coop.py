@@ -14,7 +14,7 @@ from helpers import *
 from tinydb import TinyDB, Query
 
 # Set up logging
-logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.INFO, handlers=[logging.FileHandler('logs/fee_coop.log'),logging.StreamHandler()])
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO, handlers=[logging.FileHandler('logs/fee_coop.log'),logging.StreamHandler()])
 
 app_base_dir = os.path.dirname(os.path.realpath(__file__))
 logging.info("Initializing script from " + app_base_dir)
