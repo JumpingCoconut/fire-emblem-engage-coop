@@ -475,12 +475,12 @@ class FeeCoop(interactions.Extension):
                     name="show_public",
                     description="Post the list public for everyone in this channel",
                     type=interactions.OptionType.BOOLEAN,
-                    value=True,
+                    value=False,
                     required=False,
             ),
         ]
     )
-    async def fee_opengames(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None, show_public : bool = True):
+    async def fee_opengames(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None, show_public : bool = False):
         logging.info("Request fee_opengames by " + ctx.user.username + "#" + ctx.user.discriminator)
         ephemeral = not show_public
         return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=ephemeral)
@@ -892,7 +892,7 @@ class FeeCoop(interactions.Extension):
         b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700), disabled=last_turn)
         b2 = Button(style=1, custom_id="game_success", label="Success!", emoji=interactions.Emoji(id=1068852878661398548))
         b3 = Button(style=2, custom_id="game_over", label="Game Over", emoji=interactions.Emoji(id=1068852433129832558))
-        b4 = Button(style=4, custom_id="join_game_failed", label="Could not join game", emoji=interactions.Emoji(id=1068863333526151230))
+        b4 = Button(style=4, custom_id="join_game_failed", label="Dead game? Click here to delete this game", emoji=interactions.Emoji(id=1068863333526151230))
         components = spread_to_rows(b1, b2, b3, b4)
 
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
@@ -984,32 +984,17 @@ class FeeCoop(interactions.Extension):
         if not delete_game_allowed:
             return await ctx.send("Not allowed to remove the game! The players have a few days to finish this. If no activity is found after a few days, you can try deleting it again.", ephemeral=True)
 
-        # Update game status
-        self.db.update({"status" : "abandoned"}, doc_ids=[doc_id])
-
-        # Build an embed for the host to reinstate the game if needed
-        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=None)
-        embed.description = "This game has been **abandoned** on the request of **" + ctx.user.username + "#" + ctx.user.discriminator + "**. This can happen if the game has been inactive for a while.\n\n\n" + embed.description
-        embed.description = embed.description[0:4096]
-        # Host gets the "create new game" button
-        components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
-
-        # If this is the host, simple update message. If it is not the host, send the host a private message.
-        entry = self.db.get(doc_id=doc_id)
-        turns = entry.get("turns", [])
-        started_userid = turns[0]["user"]
-        try:
-            await ctx.message.delete()
-        except:
-            pass
-        if str(ctx.user.id) == started_userid:
-            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
+        # Prepare a deletion vote
+        deletion_vote = {}
+        deletion_vote['user'] = str(ctx.user.id)
+        if ctx.guild_id:
+            deletion_vote['server'] = str(ctx.guild_id)
         else:
-            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
-            started_userobj._client = self.client._http
-            logging.info("Fee_abandon_game: Sending private message to " + started_userobj.username + "#" + started_userobj.discriminator)
-            await started_userobj.send(embeds=[embed], components=components)
-            return await ctx.send("Game abandoned. The host can reinstate the game anytime if desired.", ephemeral=True)        
+            deletion_vote['server'] = ""
+        deletion_votes = [deletion_vote]
+
+        # Delete the game and send the host a info message
+        return await self.delete_game_and_message_host(ctx, doc_id, deletion_votes)     
 
     # Reinstate the game
     @interactions.extension_component("reinstate_game")
@@ -1125,7 +1110,87 @@ class FeeCoop(interactions.Extension):
     # Join game failed
     @interactions.extension_component("join_game_failed")
     async def join_game_failed(self, ctx):
-        return await ctx.send("This is unfortunate. You can ask the author if the game ID is wrong or if the game is already finished. The author can fix or remove this entry. If this doesn't help, then after a certain time without updates, the entry will be removed automatically.", ephemeral=True)
+        doc_id = await self.get_doc_id_from_message(ctx, status="open")
+
+        user_id = str(ctx.user.id)
+        this_server_id = ""
+        if ctx.guild_id:
+            this_server_id = str(ctx.guild_id)
+
+        # Check how many votes we have to delete this game
+        entry = self.db.get(doc_id=doc_id)
+        deletion_votes = entry.get("deletion_votes", [])
+        if user_id in [deletion_vote['user'] for deletion_vote in deletion_votes]:
+            return await ctx.send("You already voted to delete this game. Right now " + str(len(deletion_votes)) + " users voted to delete this game.", ephemeral=True)
+        
+        # Add vote to database#
+        deletion_vote = {}
+        deletion_vote['user'] = user_id
+        deletion_vote['server'] = this_server_id
+        deletion_votes.append(deletion_vote)
+        self.db.update({"deletion_votes" : deletion_votes}, doc_ids=[entry.doc_id])
+
+        # Do we have enough votes to delete the game?
+        game_voted_for_deletion = False
+
+        # Host can always delete
+        turns = entry.get("turns", [])
+        if len(turns) > 0:
+            if user_id == turns[0]['user']:
+                game_voted_for_deletion = True
+        
+        # 3 unique users can delete
+        if len(deletion_votes) > 2:
+            game_voted_for_deletion = True
+
+        # If one user from another server agrees, also allow deletion
+        if this_server_id not in [deletion_vote['server'] for deletion_vote in deletion_votes]:
+            game_voted_for_deletion = True
+
+        if not game_voted_for_deletion:
+            return await ctx.send("Your vote to delete this game from the bot list has been accepted. Right now " + str(len(deletion_votes)) + " users voted to delete this game.", ephemeral=True)
+        
+        # Now delete the game and message the host
+        return await self.delete_game_and_message_host(ctx, doc_id, deletion_votes) 
+
+    # Delete a game and send the host a note that it was deleted by user vote
+    async def delete_game_and_message_host(self, ctx, doc_id, deletion_votes):
+        entry = self.db.get(doc_id=doc_id)
+        self.db.update({"status" : "abandoned"}, doc_ids=[doc_id])
+        
+        deletion_voters_list = ""
+        for deletion_vote in deletion_votes:
+            userid = deletion_vote['user']
+            serverid = deletion_vote['server']
+            userobj = await interactions.get(self.bot, interactions.User, object_id=userid)
+            deletion_voters_list += "\n" + userobj.username + "#" + userobj.discriminator
+            if serverid:
+                serverobj = await interactions.get(self.bot, interactions.Guild, object_id=serverid)
+                deletion_voters_list += " from server " + serverobj.name
+            
+        # Build an embed for the host to reinstate the game if needed
+        embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=None)
+        embed.description = "This game has been **abandoned** on the request of: " + deletion_voters_list + "\n. It is likely that your game has been already finished but was still listed in the bot as open. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
+        embed.description = embed.description[0:4096]
+        # Host gets the "create new game" button
+        components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
+
+        # If this is the host, simple update message. If it is not the host, send the host a private message.
+        entry = self.db.get(doc_id=doc_id)
+        turns = entry.get("turns", [])
+        started_userid = turns[0]["user"]
+        try:
+            await ctx.message.delete()
+        except:
+            logging.info("Tried deleting old message in delete_game_and_message_host. Failed. Not a problem.")
+        if str(ctx.user.id) == started_userid:
+            return await ctx.send(embeds=[embed], components=components, ephemeral=True)
+        else:
+            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+            started_userobj._client = self.client._http
+            logging.info("delete_game_and_message_host: Sending private message to " + started_userobj.username + "#" + started_userobj.discriminator)
+            await started_userobj.send(embeds=[embed], components=components)
+            return await ctx.send("Game abandoned with " + str(len(deletion_votes)) + " votes. The host can reinstate the game anytime if desired.", ephemeral=True)      
 
     # Select menu processing of game select
     @interactions.extension_component("show_game_docid")
