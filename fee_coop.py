@@ -444,14 +444,8 @@ class FeeCoop(interactions.Extension):
 
         return embed
 
-    # The fee main command. Its empty because the real stuff happens in the subcommands.
-    @interactions.extension_command()
-    async def fee(self, ctx: interactions.CommandContext):
-        """The Fee base command. This description isn't shown in discord."""
-        pass
-
-    # Fee opengames subcommand. Shows games to join
-    @fee.subcommand(
+    # This is not a subcommand but a main command, and its only for mods (MANAGE_MESSAGES), because it pins messages.
+    @interactions.extension_command(
         name="pinboard",
         description="NOT FINISHED YET",#PERMANENT pinboard in a channel that auto-updates with the latest games. Mod-command. Automatically pins itself.",
         options=[
@@ -472,11 +466,17 @@ class FeeCoop(interactions.Extension):
                     autocomplete=True,
             ),
         ],
-        #default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
+        default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
     )
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
         return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False)
+
+    # The fee main command. Its empty because the real stuff happens in the subcommands.
+    @interactions.extension_command()
+    async def fee(self, ctx: interactions.CommandContext):
+        """The Fee base command. This description isn't shown in discord."""
+        pass
 
     # Fee opengames subcommand. Shows games to join
     @fee.subcommand(
