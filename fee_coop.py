@@ -133,7 +133,7 @@ class FeeCoop(interactions.Extension):
 
         # Add a refresh icon if its pinboard mode
         if pinboard:
-            embed.set_footer(text="Pinboard auto-refresh: On", icon_url="https://cdn.discordapp.com/emojis/1072203564950229223.png")
+            embed.set_footer(text="Pinboard auto-refresh: On", icon_url="https://cdn.discordapp.com/emojis/1072263235484532736.png")
 
         # Prepare a simple search for these criteria
         game_search_fragment = {}
@@ -530,7 +530,7 @@ class FeeCoop(interactions.Extension):
         if entry:
             # This channel has already a pinned message
             existing_message_id = entry.get("pinboards_message")
-            existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel.id)
+            existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel_id)
             if existing_message:
                 return await existing_message.reply("This channel has already a pinboard! Delete the existing pinboard first, then add a new one.")
             else:
