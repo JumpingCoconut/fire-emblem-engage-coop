@@ -307,7 +307,7 @@ class FeeCoop(interactions.Extension):
         if "Open games from all servers with group pass: " in author:
             group_pass = author.replace("Open games from all servers with group pass: ","")
         logging.info("Adding new game via modal_new_game by user " + ctx.user.username + "#" + ctx.user.discriminator + " Code: " + code + " Server_only: " + str(server_only) + " group pass: " + group_pass)
-        return await self.fee_coop(ctx, code, server_only, group_pass)
+        return await self.show_or_create_game(ctx, code, server_only, group_pass)
 
     # Is the user part of this game? Expects a doc_id and a ctx.user object
     async def is_user_in_game(self, doc_id, user):
@@ -786,6 +786,10 @@ class FeeCoop(interactions.Extension):
             ]
         )
     async def fee_coop(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass=""):
+        return await self.show_or_create_game(ctx=ctx, code=code, server_only=server_only, group_pass=group_pass, ephemeral=False)
+
+    async def show_or_create_game(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass="", ephemeral=False):
+        logging.info("Show or create game by user " + ctx.user.username + "#" + ctx.user.discriminator + " Code: " + code + " Server_only: " + str(server_only) + " group pass: " + group_pass)
         code = code.upper()
         game_search_fragment = {"code" : code, "status" : "open"}
         GamesQ = Query()
@@ -793,7 +797,7 @@ class FeeCoop(interactions.Extension):
         if (games) and len(games) > 0:
             embed = await self.build_embed_for_game(doc_id=games[0].doc_id, show_private_information=False, for_server=ctx.guild_id)
             components = await self.build_components_for_game(doc_id=games[0].doc_id, for_user=None)
-            return await ctx.send(embeds=[embed], components=components, ephemeral=False)
+            return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
         else:
             # Send the user a message so a new game can be created
             options = []
@@ -847,7 +851,6 @@ class FeeCoop(interactions.Extension):
                 embed.set_footer(text="Group pass: " + group_pass)
             elif server_only:
                 embed.set_footer(text="Only for server: " + server_obj.name, icon_url=server_obj.icon_url)
-            ephemeral = False
             if group_pass:
                 ephemeral = True
             return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
