@@ -101,12 +101,12 @@ class FeeCoop(interactions.Extension):
                     
 
     # Lists all games with given criteria
-    async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False):
+    async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False, pinboard=False):
         # Before we attempt to create any kind of list, we should purge the list from old entries.
         await self.purge_old_entries(ctx)
         
         # Group pass should stay secret if possible
-        if group_pass:
+        if group_pass and not pinboard:
             ephemeral = True
 
         await ctx.defer(ephemeral=ephemeral)
@@ -130,6 +130,10 @@ class FeeCoop(interactions.Extension):
             embed.set_author(name="Open games from all servers with group pass: " + group_pass)
         elif for_user:
             embed.set_author(name="Games of " + ctx.user.username + "#" + ctx.user.discriminator, icon_url=ctx.user.avatar_url)
+
+        # Add a refresh icon if its pinboard mode
+        if pinboard:
+            embed.set_footer(text="Pinboard auto-refresh: On", icon_url="https://cdn.discordapp.com/emojis/1072203564950229223.png")
 
         # Prepare a simple search for these criteria
         game_search_fragment = {}
@@ -195,8 +199,6 @@ class FeeCoop(interactions.Extension):
             if for_user and entry.get("group_pass"):
                 code += " (group pass locked)"
             # If its the open game list, but ephemeral so only one user can see it anyways, might as well mark joined games 
-            # TODO In future, this should be always checked and these games shouldnt appear in first place. Only makes sense after we have /fee pinboard though.
-            #      Once /fee pinboard exists, we make this open list function to ephemeral only.
             if (not for_user) and ephemeral:
                 user_is_participant, user_is_host = await self.is_user_in_game(doc_id=entry.doc_id, user=ctx.user)
                 if user_is_participant:
@@ -252,6 +254,8 @@ class FeeCoop(interactions.Extension):
         
         # Select menu to show one game in detail
         components = None
+        s1 = None
+        b1 = None
         if len(options) > 0:
             s1 = SelectMenu(
                     custom_id="show_game_docid",
@@ -259,7 +263,52 @@ class FeeCoop(interactions.Extension):
                     options=options,
                 )
             components = [[s1]]
+
+        # Add a new game button
+        if pinboard: # TODO make this button always availible
+            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(id=1072207160890630245))
+            components = [[b1]]
+
+        # If multiple components, make them pretts
+        if s1 and b1:
+            components = spread_to_rows(s1, b1)
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
+
+    # Button to add a new game. Needs to ask for the game ID.
+    @interactions.extension_component("add_new_game")
+    async def add_new_game(self, ctx):
+        # Prepare a popup window
+        modal = interactions.Modal(
+            title="Enter Relay Trials code",
+            custom_id="modal_new_game",
+            components=[interactions.TextInput(
+                            style=interactions.TextStyleType.SHORT,
+                            label="Relay Trials coop code",
+                            placeholder="Displayed in-game after finishing a map",
+                            custom_id="code",
+                            min_length=1,
+                            max_length=10,
+                            required=True
+                        ),
+                    ],
+                )   
+        await ctx.popup(modal)
+
+    # Now we have filename, speaker and input text. Update file if needed
+    @interactions.extension_modal("modal_new_game")
+    async def modal_new_game(self, ctx, code: str):
+        await ctx.defer(ephemeral=True)
+        group_pass = ""
+        server_only = False
+        author = ""
+        if ctx.message.embeds[0].author:
+            author = ctx.message.embeds[0].author.name
+        if "Only listing server" in author:
+            server_only = True
+        if "Open games from all servers with group pass: " in author:
+            group_pass = author.replace("Open games from all servers with group pass: ","")
+
+        return await self.fee_coop(ctx, code, server_only, group_pass)
 
     # Is the user part of this game? Expects a doc_id and a ctx.user object
     async def is_user_in_game(self, doc_id, user):
@@ -297,7 +346,6 @@ class FeeCoop(interactions.Extension):
             return True
         
         return False
-
 
     # Determines which buttons the user can see and returns them. Parameter for_user expects a ctx.user object or nothing.
     async def build_components_for_game(self, doc_id, for_user=None):
@@ -470,7 +518,8 @@ class FeeCoop(interactions.Extension):
     )
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
-        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False)
+        pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False, pinboard=True)
+        return pinboardmsg
 
     # The fee main command. Its empty because the real stuff happens in the subcommands.
     @interactions.extension_command()
