@@ -517,10 +517,45 @@ class FeeCoop(interactions.Extension):
     )
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
+
+        # Does this channel already have a pinboard message?
+        if not ctx.channel_id:
+            return await ctx.send("Pinboards can only be added to a channel. Try using the command on your server in a channel where pinning messages is possible.", ephemeral=True)
+
+        channel_id = str(ctx.channel_id)
+
+        pinboard_messages = self.db.table("pinboards")
+        PinBoardQ = Query()
+        entry = pinboard_messages.get(PinBoardQ.pinboards_channel == channel_id)
+        if entry:
+            # This channel has already a pinned message
+            existing_message_id = entry.get("pinboards_message")
+            existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel.id)
+            if existing_message:
+                return await existing_message.reply("This channel has already a pinboard! Delete the existing pinboard first, then add a new one.")
+            else:
+                # The message doesnt exist anymore, remove from database
+                pinboard_messages.remove(doc_ids=[entry.doc_id])
+
+        # No pinboard message exists in this channel. Build the pinboard message and send it.
         pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False, pinboard=True)
-        channelobj = await interactions.get(self.bot, interactions.Channel, object_id=ctx.channel.id)
-        await channelobj.pin_message(pinboardmsg)
-        logging.info("Pinboard on channel: " + channelobj.name + " in server " + ctx.guild.name)
+
+        # Now pin it
+        await ctx.channel.pin_message(pinboardmsg)
+
+        # And now save it in database for automated updates 
+        server_id = ""
+        if ctx.guild_id:
+            server_id = str(ctx.guild_id)
+        new_entry = {   
+                        "pinboards_channel" : channel_id,
+                        "pinboards_message" : str(pinboardmsg),
+                        "pinboards_server_only" : server_only, 
+                        "pinboards_server_id" : server_id,
+                        "pinboards_group_pass" : group_pass
+                    }
+        pinboard_messages.insert(new_entry, PinBoardQ.pinboards_channel == channel_id)
+        logging.info("Pinboard on channel: " + ctx.channel.name + " in server " + ctx.guild.name)
         return pinboardmsg
 
     # The fee main command. Its empty because the real stuff happens in the subcommands.
