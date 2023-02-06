@@ -502,7 +502,7 @@ class FeeCoop(interactions.Extension):
     # This is not a subcommand but a main command, and its only for mods (MANAGE_MESSAGES), because it pins messages.
     @interactions.extension_command(
         name="pinboard",
-        description="Mod command. Adds a permanent pinned message to a channel that auto-updates with the latest games. Don't spam it.",
+        description="Mod command. Adds a permanent pinned message to a channel that auto-updates. Don't spam it.",
         options=[
             interactions.Option(
                     name="server_only",
