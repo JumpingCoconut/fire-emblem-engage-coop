@@ -297,7 +297,6 @@ class FeeCoop(interactions.Extension):
     # Now we have filename, speaker and input text. Update file if needed
     @interactions.extension_modal("modal_new_game")
     async def modal_new_game(self, ctx, code: str):
-        await ctx.defer(ephemeral=True)
         group_pass = ""
         server_only = False
         author = ""
@@ -307,7 +306,7 @@ class FeeCoop(interactions.Extension):
             server_only = True
         if "Open games from all servers with group pass: " in author:
             group_pass = author.replace("Open games from all servers with group pass: ","")
-
+        logging.info("Adding new game via modal_new_game by user " + ctx.user.username + "#" + ctx.user.discriminator + " Code: " + code + " Server_only: " + str(server_only) + " group pass: " + group_pass)
         return await self.fee_coop(ctx, code, server_only, group_pass)
 
     # Is the user part of this game? Expects a doc_id and a ctx.user object
@@ -519,6 +518,9 @@ class FeeCoop(interactions.Extension):
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
         pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False, pinboard=True)
+        channelobj = await interactions.get(self.bot, interactions.Channel, object_id=ctx.channel.id)
+        await channelobj.pin_message(pinboardmsg)
+        logging.info("Pinboard on channel: " + channelobj.name + " in server " + ctx.guild.name)
         return pinboardmsg
 
     # The fee main command. Its empty because the real stuff happens in the subcommands.
