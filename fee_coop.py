@@ -1170,7 +1170,7 @@ class FeeCoop(interactions.Extension):
             
         # Build an embed for the host to reinstate the game if needed
         embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=None)
-        embed.description = "This game has been **abandoned** on the request of: " + deletion_voters_list + "\n. It is likely that your game has been already finished but was still listed in the bot as open. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
+        embed.description = "This game has been **abandoned** on the request of:\n" + deletion_voters_list + "\n\nIt is likely that your game has been already finished but was still listed in the bot as open. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
         embed.description = embed.description[0:4096]
         # Host gets the "create new game" button
         components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
