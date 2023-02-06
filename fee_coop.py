@@ -452,6 +452,34 @@ class FeeCoop(interactions.Extension):
 
     # Fee opengames subcommand. Shows games to join
     @fee.subcommand(
+        name="pinboard",
+        description="NOT FINISHED YET",#PERMANENT pinboard in a channel that auto-updates with the latest games. Mod-command. Automatically pins itself.",
+        options=[
+            interactions.Option(
+                    name="server_only",
+                    description="Only games from people of this discord server?",
+                    value=False,
+                    type=interactions.OptionType.BOOLEAN,
+                    required=False,
+            ),
+            interactions.Option(
+                    name="group_pass",
+                    description="List only games with this group pass, server independent",
+                    type=interactions.OptionType.STRING,
+                    min_length=0,
+                    max_length=100,
+                    required=False,
+                    autocomplete=True,
+            ),
+        ],
+        default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
+    )
+    async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
+        logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
+        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False)
+
+    # Fee opengames subcommand. Shows games to join
+    @fee.subcommand(
         name="opengames",
         description="Show open relay trials from Fire Emblem Engage",
         options=[
@@ -484,7 +512,6 @@ class FeeCoop(interactions.Extension):
         logging.info("Request fee_opengames by " + ctx.user.username + "#" + ctx.user.discriminator)
         ephemeral = not show_public
         return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=ephemeral)
-
 
     # Fee mygames subcommand. Shows all games where the user participated
     @fee.subcommand(
@@ -844,7 +871,7 @@ class FeeCoop(interactions.Extension):
         # Get the open game from the last message
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
 
-        # Last messgae hidden or not?
+        # Last message hidden or not? - For new we avoid spam and send always ephemeral
         # if ctx.message.flags == 64:
         #     ephemeral = True
         # else:
@@ -1144,8 +1171,9 @@ class FeeCoop(interactions.Extension):
             game_voted_for_deletion = True
 
         # If one user from another server agrees, also allow deletion
-        if this_server_id not in [deletion_vote['server'] for deletion_vote in deletion_votes]:
-            game_voted_for_deletion = True
+        for deletion_vote in deletion_votes:
+            if this_server_id != deletion_vote['server']:
+                game_voted_for_deletion = True
 
         if not game_voted_for_deletion:
             return await ctx.send("Your vote to delete this game from the bot list has been accepted. Right now " + str(len(deletion_votes)) + " users voted to delete this game.", ephemeral=True)
@@ -1172,13 +1200,16 @@ class FeeCoop(interactions.Extension):
         embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=None)
         embed.description = "This game has been **abandoned** on the request of:\n" + deletion_voters_list + "\n\nIt is likely that your game has been already finished but was still listed in the bot as open. If you want to list the game as open game again, just click the button below to **reinstate** it.\n\n\n" + embed.description
         embed.description = embed.description[0:4096]
-        # Host gets the "create new game" button
-        components = await self.build_components_for_game(doc_id=doc_id, for_user=ctx.user)
 
-        # If this is the host, simple update message. If it is not the host, send the host a private message.
-        entry = self.db.get(doc_id=doc_id)
+        # Get the host user and build components for him
         turns = entry.get("turns", [])
         started_userid = turns[0]["user"]
+        started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
+
+        # Host gets the "create new game" button
+        components = await self.build_components_for_game(doc_id=entry.doc_id, for_user=started_userobj)
+
+        # If this is the host, simple update message. If it is not the host, send the host a private message.
         try:
             await ctx.message.delete()
         except:
@@ -1186,7 +1217,6 @@ class FeeCoop(interactions.Extension):
         if str(ctx.user.id) == started_userid:
             return await ctx.send(embeds=[embed], components=components, ephemeral=True)
         else:
-            started_userobj = await interactions.get(self.bot, interactions.User, object_id=started_userid)
             started_userobj._client = self.client._http
             logging.info("delete_game_and_message_host: Sending private message to " + started_userobj.username + "#" + started_userobj.discriminator)
             await started_userobj.send(embeds=[embed], components=components)
@@ -1230,7 +1260,7 @@ class FeeCoop(interactions.Extension):
         try:
             await ctx.message.delete()
         except:
-            pass
+            logging.info("Tried deleting old message in select_map. Failed. Not a problem.")
         return await self.create_new_game(ctx=ctx, code=code, group_pass=group_pass, map=map, server_only=server_only)
 
     # Rightclick to check the message for game IDs
