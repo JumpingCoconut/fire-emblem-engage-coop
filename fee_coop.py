@@ -855,7 +855,7 @@ class FeeCoop(interactions.Extension):
             # Send a new message if replacing didnt work
             if not replace_message:
                 logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
-                pinboardmsg = await channel_obj.send(embeds=[embed], components=components, ephemeral=False)
+                pinboardmsg = await channel_obj.send(embeds=[embed], components=components)
                 await channel_obj.pin_message(pinboardmsg)
 
                 # Update the database with the new message ID
