@@ -519,7 +519,7 @@ class FeeCoop(interactions.Extension):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
 
         # Does this channel already have a pinboard message?
-        if not ctx.channel_id:
+        if not ctx.channel:
             return await ctx.send("Pinboards can only be added to a channel. Try using the command on your server in a channel where pinning messages is possible.", ephemeral=True)
 
         channel_id = str(ctx.channel_id)
