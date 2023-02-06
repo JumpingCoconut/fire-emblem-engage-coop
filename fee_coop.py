@@ -549,7 +549,7 @@ class FeeCoop(interactions.Extension):
             server_id = str(ctx.guild_id)
         new_entry = {   
                         "pinboards_channel" : channel_id,
-                        "pinboards_message" : str(pinboardmsg),
+                        "pinboards_message" : str(pinboardmsg.id),
                         "pinboards_server_only" : server_only, 
                         "pinboards_server_id" : server_id,
                         "pinboards_group_pass" : group_pass
