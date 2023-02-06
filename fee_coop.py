@@ -892,6 +892,7 @@ class FeeCoop(interactions.Extension):
         
     # Autocompletion for the parameter "group_pass". Searches for previous group passes of that user and shows them
     @interactions.extension_autocomplete(command="fee", name="group_pass")
+    @interactions.extension_autocomplete(command="pinboard", name="group_pass")
     async def autocomplete_group_pass(self, ctx, user_input: str = ""):
         logging.info("Autocomplete group pass by " + ctx.user.username + "#" + ctx.user.discriminator + " for " + str(user_input))
         options = []
