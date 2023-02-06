@@ -530,10 +530,10 @@ class FeeCoop(interactions.Extension):
         if entry:
             # This channel has already a pinned message
             existing_message_id = entry.get("pinboards_message")
-            existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel_id)
-            if existing_message:
-                return await existing_message.reply("This channel has already a pinboard! Delete the existing pinboard first, then add a new one.")
-            else:
+            try:
+                existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel_id)
+                return await existing_message.reply("This channel has already a pinboard! Delete the existing pinboard first, then add a new one.", ephemeral=True)
+            except interactions.api.LibraryException:
                 # The message doesnt exist anymore, remove from database
                 pinboard_messages.remove(doc_ids=[entry.doc_id])
 
