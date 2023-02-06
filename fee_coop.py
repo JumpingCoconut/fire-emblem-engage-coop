@@ -266,7 +266,7 @@ class FeeCoop(interactions.Extension):
 
         # Add a new game button
         if pinboard: # TODO make this button always availible
-            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(id=1072207160890630245))
+            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(id=1072207140808298506))
             components = [[b1]]
 
         # If multiple components, make them pretts
