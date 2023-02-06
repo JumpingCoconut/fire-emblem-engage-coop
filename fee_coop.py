@@ -818,6 +818,7 @@ class FeeCoop(interactions.Extension):
             logging.info("update_pinboards: Updating pinboards for group pass: " + group_pass)
 
         for pinboard in pinboards:
+            logging.info("update_pinboards: Found pinboard " + str(pinboard))
             message_id = pinboard.get("pinboards_message")
             channel_id = pinboard.get("pinboards_channel")
             replace_message = True
@@ -845,6 +846,7 @@ class FeeCoop(interactions.Extension):
             if replace_message:
                 try: 
                     message_obj.edit(embeds=[embed], components=components)
+                    logging.info("update_pinboards: Pinboard editing succesful in channel " + str(channel_obj.name))
                 except:
                     # If editing doesnt work, send the message anew
                     logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
