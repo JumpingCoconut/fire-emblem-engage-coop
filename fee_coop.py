@@ -554,7 +554,7 @@ class FeeCoop(interactions.Extension):
                         "pinboards_server_id" : server_id,
                         "pinboards_group_pass" : group_pass
                     }
-        pinboard_messages.insert(new_entry, PinBoardQ.pinboards_channel == channel_id)
+        pinboard_messages.insert(new_entry)
         logging.info("Pinboard on channel: " + ctx.channel.name + " in server " + ctx.guild.name)
         return pinboardmsg
 
