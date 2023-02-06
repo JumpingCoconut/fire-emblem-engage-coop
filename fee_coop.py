@@ -845,7 +845,7 @@ class FeeCoop(interactions.Extension):
             embed, components = await self.build_game_list(userobj=None, server_id=server_id, server_only=server_only, group_pass=group_pass, status="open", mygames=None, pinboard=True)
             if replace_message:
                 try: 
-                    message_obj.edit(embeds=[embed], components=components)
+                    await message_obj.edit(embeds=[embed], components=components)
                     logging.info("update_pinboards: Pinboard editing succesful in channel " + str(channel_obj.name))
                 except:
                     # If editing doesnt work, send the message anew
