@@ -307,7 +307,7 @@ class FeeCoop(interactions.Extension):
         if "Open games from all servers with group pass: " in author:
             group_pass = author.replace("Open games from all servers with group pass: ","")
         logging.info("Adding new game via modal_new_game by user " + ctx.user.username + "#" + ctx.user.discriminator + " Code: " + code + " Server_only: " + str(server_only) + " group pass: " + group_pass)
-        return await self.show_or_create_game(ctx, code, server_only, group_pass)
+        return await self.show_or_create_game(ctx=ctx, code=code, server_only=server_only, group_pass=group_pass, ephemeral=True)
 
     # Is the user part of this game? Expects a doc_id and a ctx.user object
     async def is_user_in_game(self, doc_id, user):
