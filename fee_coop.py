@@ -276,7 +276,7 @@ class FeeCoop(interactions.Extension):
 
         # Add a new game button
         if pinboard: # TODO make this button always availible
-            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(id=1072207140808298506))
+            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(name="🆕"))
             components = [[b1]]
 
         # If multiple components, make them pretts
@@ -803,7 +803,6 @@ class FeeCoop(interactions.Extension):
 
  # Find all pinboards on all servers and update them with new information if needed
     async def update_pinboards(self, game_wants_server_only=False, server_id="", group_pass=""):
-        
         if not server_id:
             game_wants_server_only = False
             
@@ -812,9 +811,11 @@ class FeeCoop(interactions.Extension):
         if game_wants_server_only:
             # All pinboards in channels on this server
             pinboards = pinboard_messages.search((PinBoardQ.pinboards_server_only == True) & (PinBoardQ.pinboards_server_id == server_id))
+            logging.info("update_pinboards: Updating pinboards for server only " + server_id)
         else:
             # All pinboards on all servers with this group pass. Blank is also a valid group pass as it is the default.
             pinboards = pinboard_messages.search(PinBoardQ.pinboards_group_pass == group_pass)
+            logging.info("update_pinboards: Updating pinboards for group pass: " + group_pass)
 
         for pinboard in pinboards:
             message_id = pinboard.get("pinboards_message")
@@ -1109,17 +1110,18 @@ class FeeCoop(interactions.Extension):
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=ctx.guild_id)
             return await ctx.send(embeds=[embed], ephemeral=True)
         elif code:
-            # Group pass locked games dont show public
+            # If previous message was ephemeral or if group pass locked, dont show public
             ephemeral = False
-            if group_pass:
-                ephemeral = True 
+            if ctx.message.flags == 64 or group_pass:
+                ephemeral = True
                 
-            await ctx.defer(ephemeral)
             game_search_fragment = {"code" : code, "status" : "open"}
             GamesQ = Query()
             games = self.db.search(GamesQ.fragment(game_search_fragment))
             if (games) and len(games) > 0:
                 return await ctx.send("An open game with the code " + code + " already exists!", ephemeral=True)
+
+            await ctx.defer(ephemeral)
             
             # Server only makes only sense if we are on a server
             this_server_id = ""
