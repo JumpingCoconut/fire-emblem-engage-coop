@@ -64,7 +64,7 @@ class FeeCoop(interactions.Extension):
         return absolute_path, random_file
 
     # Check for old games and delete them
-    async def purge_old_entries(self, ctx):
+    async def purge_old_entries(self):
         # Search for open games only
         game_search_fragment = {"status" : "open"}
         GamesQ = Query()
@@ -100,11 +100,8 @@ class FeeCoop(interactions.Extension):
                 await started_userobj.send(embeds=[embed], components=components)
                     
 
-    # Lists all games with given criteria
-    async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", for_user=None, ephemeral=False, pinboard=False):
-        # Before we attempt to create any kind of list, we should purge the list from old entries.
-        await self.purge_old_entries(ctx)
-        
+    # Shows the current game list in the channel
+    async def show_game_list(self, ctx, server_only=None, group_pass="", status="open", mygames=None, ephemeral=False, pinboard=False):
         # Group pass should stay secret if possible
         if group_pass and not pinboard:
             ephemeral = True
@@ -112,28 +109,41 @@ class FeeCoop(interactions.Extension):
         await ctx.defer(ephemeral=ephemeral)
 
         # Server only makes only sense if we have a server (not in private messages)
-        if not ctx.guild_id:
+        server_id = ""
+        if ctx.guild_id:
+            server_id = ctx.guild_id
+        else:
             server_only = False
 
-        color = assign_color_to_user(ctx.user.username)
+        # Build the embed and components, and send them into the current channel
+        embed, components = await self.build_game_list(userobj=ctx.user, server_id=server_id, server_only=server_only, group_pass=group_pass, status=status, mygames=mygames, pinboard=pinboard)
+        return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
+
+    # Lists all games with given criteria
+    async def build_game_list(self, userobj=None, server_id="", server_only=None, group_pass="", status="open", mygames=None, pinboard=False):
+        # Before we attempt to create any kind of list, we should purge the list from old entries.
+        await self.purge_old_entries()
+        
+        color = assign_color_to_user(userobj.username)
         title = "Fire Emblem Engage: Relay Trials"
         embed = interactions.Embed( title=title, 
                                     color=color, 
                                     provider=interactions.EmbedProvider(name="Fee coop"),
                                     timestamp=datetime.datetime.utcnow())
+        if not server_id:
+            server_only = False
 
         if server_only:
-            server_id = ctx.guild_id
             serverobj = await interactions.get(self.bot, interactions.Guild, object_id=server_id)
             embed.set_author(name="Only listing server: " + serverobj.name, icon_url=serverobj.icon_url)
         elif group_pass:
             embed.set_author(name="Open games from all servers with group pass: " + group_pass)
-        elif for_user:
-            embed.set_author(name="Games of " + ctx.user.username + "#" + ctx.user.discriminator, icon_url=ctx.user.avatar_url)
+        elif mygames:
+            embed.set_author(name="Games of " + userobj.username + "#" + userobj.discriminator, icon_url=userobj.avatar_url)
 
         # Add a refresh icon if its pinboard mode
         if pinboard:
-            embed.set_footer(text="Pinboard auto-refresh: On", icon_url="https://cdn.discordapp.com/emojis/1072263235484532736.png")
+            embed.set_footer(text="Pinboard auto-refresh: On", icon_url="https://cdn.discordapp.com/emojis/1072284456146190346.gif")
 
         # Prepare a simple search for these criteria
         game_search_fragment = {}
@@ -143,7 +153,7 @@ class FeeCoop(interactions.Extension):
             game_search_fragment["group_pass"] = group_pass
         else:
             # These games explicitly do not want to be listed
-            if not for_user:
+            if not mygames:
                 game_search_fragment["group_pass"] = ""
 
         # Do we have any subcriteria where we need to check the individual turns?
@@ -152,12 +162,12 @@ class FeeCoop(interactions.Extension):
             # EVERY Turn object must have the same server ID as the current server
             logging.info("Searching for current server and " + str(game_search_fragment))
             TurnsQ = Query()
-            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.all(TurnsQ.server == str(ctx.guild_id))))
-        elif for_user:
+            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.all(TurnsQ.server == server_id)))
+        elif mygames:
             # The current user must be present in ANY turn, not neccessarily in all turns
             logging.info("Searching for current user and " + str(game_search_fragment))
             TurnsQ = Query()
-            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.any(TurnsQ.user == str(ctx.user.id))))
+            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.any(TurnsQ.user == server_id)))
         else:
             # Just match the broad search from above
             logging.info("Searching for " + str(game_search_fragment))
@@ -174,7 +184,7 @@ class FeeCoop(interactions.Extension):
                 return datetime.datetime.max
 
         reverse_sort = False
-        if for_user:
+        if mygames:
             reverse_sort = True
         sorted_games = sorted(games, key=sort_by_timestamp,reverse=reverse_sort)
         description = ""
@@ -183,12 +193,9 @@ class FeeCoop(interactions.Extension):
             turns = entry.get("turns", [])
             # Some games don't want to be seen unless they are on a specific server.
             game_wants_server_only = entry.get("server_only")
-            this_server_id = ""
-            if ctx.guild_id:
-                this_server_id = str(ctx.guild_id)
             if game_wants_server_only:
                 game_server_id = turns[0]["server"]
-                if this_server_id != game_server_id:
+                if server_id != game_server_id:
                     continue
             
             # First line: Code and map
@@ -196,11 +203,11 @@ class FeeCoop(interactions.Extension):
             if not status:
                 # If no status was selected, show the current games status
                 code += " (" + entry.get("status") + ")"
-            if for_user and entry.get("group_pass"):
+            if mygames and entry.get("group_pass"):
                 code += " (group pass locked)"
-            # If its the open game list, but ephemeral so only one user can see it anyways, might as well mark joined games 
-            if (not for_user) and ephemeral:
-                user_is_participant, user_is_host = await self.is_user_in_game(doc_id=entry.doc_id, user=ctx.user)
+            # If the current user played it already, mark the game
+            if (not mygames) and (not pinboard):
+                user_is_participant, user_is_host = await self.is_user_in_game(doc_id=entry.doc_id, user=userobj)
                 if user_is_participant:
                     code += " (already joined)"
 
@@ -226,7 +233,7 @@ class FeeCoop(interactions.Extension):
             utc_time = calendar.timegm(timestamp.utctimetuple())
             last_activity_discordstring = "<t:" + str(utc_time) + ":R>"
             username = started_userobj.username + "#" + started_userobj.discriminator
-            if started_serverid and (started_serverid != this_server_id):
+            if started_serverid and (started_serverid != server_id):
                 username += " (server " + started_serverobj.name + ")"
             description += "*by user " + username + ", " + str(len(turns)) +  "/" + str(maxplayers) + " players, " + last_activity_discordstring + "*\n\n"
 
@@ -272,7 +279,8 @@ class FeeCoop(interactions.Extension):
         # If multiple components, make them pretts
         if s1 and b1:
             components = spread_to_rows(s1, b1)
-        return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
+
+        return embed, components
 
     # Button to add a new game. Needs to ask for the game ID.
     @interactions.extension_component("add_new_game")
@@ -494,7 +502,7 @@ class FeeCoop(interactions.Extension):
     # This is not a subcommand but a main command, and its only for mods (MANAGE_MESSAGES), because it pins messages.
     @interactions.extension_command(
         name="pinboard",
-        description="NOT FINISHED YET",#PERMANENT pinboard in a channel that auto-updates with the latest games. Mod-command. Automatically pins itself.",
+        description="Mod command. Adds a permanent pinned message to a channel that auto-updates with the latest games. Don't spam it.",
         options=[
             interactions.Option(
                     name="server_only",
@@ -538,7 +546,7 @@ class FeeCoop(interactions.Extension):
                 pinboard_messages.remove(doc_ids=[entry.doc_id])
 
         # No pinboard message exists in this channel. Build the pinboard message and send it.
-        pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=False, pinboard=True)
+        pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", mygames=None, ephemeral=False, pinboard=True)
 
         # Now pin it
         await ctx.channel.pin_message(pinboardmsg)
@@ -597,7 +605,7 @@ class FeeCoop(interactions.Extension):
     async def fee_opengames(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None, show_public : bool = False):
         logging.info("Request fee_opengames by " + ctx.user.username + "#" + ctx.user.discriminator)
         ephemeral = not show_public
-        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", for_user=None, ephemeral=ephemeral)
+        return await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", mygames=None, ephemeral=ephemeral)
 
     # Fee mygames subcommand. Shows all games where the user participated
     @fee.subcommand(
@@ -619,7 +627,7 @@ class FeeCoop(interactions.Extension):
             status = "open"
         else:
             status = None
-        return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, for_user=True, ephemeral=True)
+        return await self.show_game_list(ctx=ctx, server_only=False, group_pass=None, status=status, mygames=True, ephemeral=True)
 
     # Fee notifications turns on private messages for the user when a new game is created
     # ATTENTION: To avoid spam, server_only is now true by default. Nobody getting notifs about EVERYTHING now.
@@ -1076,6 +1084,8 @@ class FeeCoop(interactions.Extension):
             # Update database and inform users 
             doc_id = self.db.insert(new_item) 
             await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
+            # TODO
+            #await self.update_pinboards(server_only=server_only, group_pass=group_pass)
 
             # Now show that a new game was added
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
