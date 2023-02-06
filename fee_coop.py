@@ -124,7 +124,10 @@ class FeeCoop(interactions.Extension):
         # Before we attempt to create any kind of list, we should purge the list from old entries.
         await self.purge_old_entries()
         
-        color = assign_color_to_user(userobj.username)
+        if pinboard:
+            color = interactions.Color.white()
+        else:
+            color = assign_color_to_user(userobj.username)
         title = "Fire Emblem Engage: Relay Trials"
         embed = interactions.Embed( title=title, 
                                     color=color, 
@@ -206,7 +209,7 @@ class FeeCoop(interactions.Extension):
             if mygames and entry.get("group_pass"):
                 code += " (group pass locked)"
             # If the current user played it already, mark the game
-            if (not mygames) and (not pinboard):
+            if userobj and (not mygames) and (not pinboard):
                 user_is_participant, user_is_host = await self.is_user_in_game(doc_id=entry.doc_id, user=userobj)
                 if user_is_participant:
                     code += " (already joined)"
@@ -798,6 +801,69 @@ class FeeCoop(interactions.Extension):
             logging.info("Notify_users: Sending private message to " + user_obj.username + "#" + user_obj.discriminator)
             return await user_obj.send(embeds=[embed], components=components)
 
+ # Find all pinboards on all servers and update them with new information if needed
+    async def update_pinboards(self, game_wants_server_only=False, server_id="", group_pass=""):
+        
+        if not server_id:
+            game_wants_server_only = False
+            
+        pinboard_messages = self.db.table("pinboards")
+        PinBoardQ = Query()
+        if game_wants_server_only:
+            # All pinboards in channels on this server
+            pinboards = pinboard_messages.search((PinBoardQ.pinboards_server_only == True) & (PinBoardQ.pinboards_server_id == server_id))
+        else:
+            # All pinboards on all servers with this group pass. Blank is also a valid group pass as it is the default.
+            pinboards = pinboard_messages.search(PinBoardQ.pinboards_group_pass == group_pass)
+
+        for pinboard in pinboards:
+            message_id = pinboard.get("pinboards_message")
+            channel_id = pinboard.get("pinboards_channel")
+            replace_message = True
+            try:
+                message_obj = await interactions.get(self.bot, interactions.Message, object_id=message_id, parent_id=channel_id)
+            except interactions.api.LibraryException:
+                # The message doesnt exist anymore, write a new one in the same channel later.
+                message_obj = None
+                replace_message = False
+            try:
+                channel_obj = await interactions.get(self.bot, interactions.Channel, object_id=channel_id)
+            except interactions.api.LibraryException:
+                # If the channel doesnt exist anymore, nothing we can do. Remove entry from database
+                logging.info("update_pinboards: Channel of the pinboard message was deleted, removing from database. Old channel: " + str(channel_id))
+                pinboard_messages.remove(doc_ids=[pinboard.doc_id])
+                continue
+            
+            # Get the parameters of this pinboard
+            server_only = pinboard.get("pinboards_server_only")
+            server_id = pinboard.get("pinboards_server_id")
+            group_pass = pinboard.get("pinboards_group_pass")
+
+            # Now alter the message. Build a new one with exactly the same criteria
+            embed, components = await self.build_game_list(userobj=None, server_id=server_id, server_only=server_only, group_pass=group_pass, status="open", mygames=None, pinboard=True)
+            if replace_message:
+                try: 
+                    message_obj.edit(embeds=[embed], components=components)
+                except:
+                    # If editing doesnt work, send the message anew
+                    logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
+                    replace_message = False
+
+            # Send a new message if replacing didnt work
+            if not replace_message:
+                logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
+                pinboardmsg = await channel_obj.send(embeds=[embed], components=components, ephemeral=False)
+                await channel_obj.pin_message(pinboardmsg)
+
+                # Update the database with the new message ID
+                pinboard_messages.update({"pinboards_message" : pinboardmsg}, doc_ids=[pinboard.doc_id])
+                # At least try cleaning up the old message
+                if message_obj:
+                    try:
+                        message_obj.delete()
+                    except:
+                        logging.info("update_pinboards: Deleting old pinned message was not succesul either. Nothing we can do")
+
     # Fee coop to show or create a game
     @fee.subcommand(
             name="coop",
@@ -1084,8 +1150,7 @@ class FeeCoop(interactions.Extension):
             # Update database and inform users 
             doc_id = self.db.insert(new_item) 
             await self.notify_users(ctx=ctx, doc_id=doc_id, server_only=server_only, group_pass=group_pass)
-            # TODO
-            #await self.update_pinboards(server_only=server_only, group_pass=group_pass)
+            await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
 
             # Now show that a new game was added
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=ephemeral, for_server=ctx.guild_id)
@@ -1200,6 +1265,11 @@ class FeeCoop(interactions.Extension):
                 description=str("Fee coop file")
                 )
             files = [fxy]
+
+        # Update all pinboards
+        group_pass = entry.get("group_pass")
+        server_only = entry.get("server_only")
+        await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
 
         # Update message in the current channel for the updating user
         return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
