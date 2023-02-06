@@ -859,7 +859,7 @@ class FeeCoop(interactions.Extension):
                 await channel_obj.pin_message(pinboardmsg)
 
                 # Update the database with the new message ID
-                pinboard_messages.update({"pinboards_message" : pinboardmsg}, doc_ids=[pinboard.doc_id])
+                pinboard_messages.update({"pinboards_message" : str(pinboardmsg.id)}, doc_ids=[pinboard.doc_id])
                 # At least try cleaning up the old message
                 if message_obj:
                     try:
