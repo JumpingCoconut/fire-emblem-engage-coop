@@ -83,6 +83,7 @@ class FeeCoop(interactions.Extension):
                 
                 # Update game status
                 self.db.update({"status" : "abandoned"}, doc_ids=[entry.doc_id])
+                # Note: No pinboard update here, because this function gets triggered by the pinboard update, avoid circle loop
 
                 # Build an embed for the host to reinstate the game if needed
                 embed = await self.build_embed_for_game(doc_id=entry.doc_id, show_private_information=True, for_server=None)
@@ -1104,6 +1105,12 @@ class FeeCoop(interactions.Extension):
             turns[-1]["timestamp"] = datetime.datetime.utcnow().isoformat()
             self.db.update({"status" : "open", "turns": turns}, doc_ids=[doc_id])
             embed = await self.build_embed_for_game(doc_id=doc_id, show_private_information=True, for_server=ctx.guild_id)
+            this_server_id = ""
+            if ctx.guild_id:
+                this_server_id = str(ctx.guild_id)
+            group_pass = entry.get("group_pass")
+            server_only = entry.get("server_only")
+            await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
             return await ctx.send(embeds=[embed], ephemeral=True)
         elif code:
             # If previous message was ephemeral or if group pass locked, dont show public
@@ -1353,7 +1360,16 @@ class FeeCoop(interactions.Extension):
     async def delete_game_and_message_host(self, ctx, doc_id, deletion_votes):
         entry = self.db.get(doc_id=doc_id)
         self.db.update({"status" : "abandoned"}, doc_ids=[doc_id])
-        
+
+        # Game deleted, update pinboards
+        this_server_id = ""
+        if ctx.guild_id:
+            this_server_id = str(ctx.guild_id)
+        group_pass = entry.get("group_pass")
+        server_only = entry.get("server_only")
+        await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
+
+        # Get a list of who deleted the game
         deletion_voters_list = ""
         for deletion_vote in deletion_votes:
             userid = deletion_vote['user']
