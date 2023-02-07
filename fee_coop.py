@@ -869,7 +869,7 @@ class FeeCoop(interactions.Extension):
                 # At least try cleaning up the old message
                 if message_obj:
                     try:
-                        message_obj.delete()
+                        await message_obj.delete()
                     except:
                         logging.info("update_pinboards: Deleting old pinned message was not successful.")
 
