@@ -838,7 +838,7 @@ class FeeCoop(interactions.Extension):
                 continue
             
             seconds_since_pinboard_posted = (datetime.datetime.now(tz=message_obj.timestamp.tzinfo) - message_obj.timestamp).seconds
-            if seconds_since_pinboard_posted > 1:
+            if seconds_since_pinboard_posted > 28800:
                 logging.info("update_pinboards: Pinboard last active more than 8 hours ago. Reposting it. " + str(message_obj.timestamp))
                 replace_message = False
 
