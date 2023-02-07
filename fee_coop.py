@@ -826,8 +826,7 @@ class FeeCoop(interactions.Extension):
                 logging.info("update_pinboards: Pinboard message or channel was deleted, removing from update list.")
                 pinboard_messages.remove(doc_ids=[pinboard.doc_id])
             
-            #seconds_since_pinboard_posted = (datetime.datetime.now() - message_obj.timestamp).seconds
-            seconds_since_pinboard_posted = 1
+            seconds_since_pinboard_posted = (datetime.datetime.now(tz=message_obj.timestamp.tzinfo) - message_obj.timestamp).seconds
             if seconds_since_pinboard_posted > 28800:
                 logging.info("update_pinboards: Pinboard last active more than 8 hours ago. Reposting it. " + str(message_obj.timestamp))
                 replace_message = False
