@@ -1051,6 +1051,8 @@ class FeeCoop(interactions.Extension):
     async def fee_join_game(self, ctx):
         # Get the open game from the last message
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        if not doc_id:
+            return await ctx.send("Could not find game, maybe it was finished already?", ephemeral=True)
 
         # Last message hidden or not? - For new we avoid spam and send always ephemeral
         # if ctx.message.flags == 64:
@@ -1188,14 +1190,14 @@ class FeeCoop(interactions.Extension):
     # Abandon the game
     @interactions.extension_component("abandon_game")
     async def fee_abandon_game(self, ctx):
-        await ctx.defer(ephemeral=True)
         # Get the open game from the last message
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
 
         # Game found?
         if not doc_id:
             return await ctx.send("Could not find open game, maybe it was finished meanwhile?", ephemeral=True)
-
+        
+        await ctx.defer(ephemeral=True)
         # Game deletion allowed?
         delete_game_allowed = await self.can_user_delete_game(doc_id=doc_id, user=ctx.user)
         if not delete_game_allowed:
@@ -1217,6 +1219,8 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("reinstate_game")
     async def fee_reinstate_game(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="abandoned")
+        if not doc_id:
+            return await ctx.send("Could not find abandoned game, maybe it was reinstated already?", ephemeral=True)
         user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
         if not user_is_host:
             return await ctx.send("Only the host can reinstate this old game.", ephemeral=True)
@@ -1330,6 +1334,8 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("game_ongoing")
     async def game_ongoing(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        if not doc_id:
+            return await ctx.send("Could not find game, maybe it was finished already?", ephemeral=True)
         # User already in the game?
         user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
         if user_is_participant:
@@ -1340,6 +1346,8 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("game_success")
     async def game_success(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        if not doc_id:
+            return await ctx.send("Could not find game, maybe it was finished already?", ephemeral=True)                
         # User already in the game?
         user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
         if user_is_participant:
@@ -1350,6 +1358,8 @@ class FeeCoop(interactions.Extension):
     @interactions.extension_component("game_over")
     async def game_over(self, ctx):
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        if not doc_id:
+            return await ctx.send("Could not find game, maybe it was finished already?", ephemeral=True)
         # User already in the game?
         user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
         if user_is_participant:
@@ -1359,9 +1369,11 @@ class FeeCoop(interactions.Extension):
     # Join game failed
     @interactions.extension_component("join_game_failed")
     async def join_game_failed(self, ctx):
-        await ctx.defer(ephemeral=True)
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
+        if not doc_id:
+            return await ctx.send("Could not find game, maybe it was finished already?", ephemeral=True)
 
+        await ctx.defer(ephemeral=True)
         user_id = str(ctx.user.id)
         this_server_id = ""
         if ctx.guild_id:
