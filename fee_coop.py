@@ -4,8 +4,6 @@ import calendar
 import datetime
 import logging
 import json
-import chardet
-import aiohttp
 import interactions
 from interactions import Button, SelectMenu, SelectOption, spread_to_rows, autodefer
 import os
@@ -164,17 +162,17 @@ class FeeCoop(interactions.Extension):
         GamesQ = Query()
         if server_only:
             # EVERY Turn object must have the same server ID as the current server
-            logging.info("Searching for current server and " + str(game_search_fragment))
+            logging.info("build_game_list: Searching for current server and " + str(game_search_fragment))
             TurnsQ = Query()
             games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.all(TurnsQ.server == server_id)))
-        elif mygames:
+        elif mygames and userobj:
             # The current user must be present in ANY turn, not neccessarily in all turns
-            logging.info("Searching for current user and " + str(game_search_fragment))
+            logging.info("build_game_list: Searching for current user and " + str(game_search_fragment))
             TurnsQ = Query()
-            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.any(TurnsQ.user == server_id)))
+            games = self.db.search((GamesQ.fragment(game_search_fragment)) & (GamesQ.turns.any(TurnsQ.user == str(userobj.id))))
         else:
             # Just match the broad search from above
-            logging.info("Searching for " + str(game_search_fragment))
+            logging.info("build_game_list: Searching for " + str(game_search_fragment))
             games = self.db.search(GamesQ.fragment(game_search_fragment))
 
         # Sort the dict by timestamp and go
@@ -530,32 +528,29 @@ class FeeCoop(interactions.Extension):
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = ""):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
 
-        # Does this channel already have a pinboard message?
+        # Command only valid in channels
         if not ctx.channel:
             return await ctx.send("Pinboards can only be added to a channel. Try using the command on your server in a channel where pinning messages is possible.", ephemeral=True)
 
+        # Does this channel already have a pinboard message?
         channel_id = str(ctx.channel_id)
-
-        pinboard_messages = self.db.table("pinboards")
-        PinBoardQ = Query()
-        entry = pinboard_messages.get(PinBoardQ.pinboards_channel == channel_id)
-        if entry:
-            # This channel has already a pinned message
-            existing_message_id = entry.get("pinboards_message")
-            try:
-                existing_message = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=ctx.channel_id)
-                return await ctx.send("This channel has already a pinboard! Delete the existing pinboard first, then add a new one. Link to the existing pinboard message: " + str(existing_message.url), ephemeral=True)
-            except interactions.api.LibraryException:
-                # The message doesnt exist anymore, remove from database
-                pinboard_messages.remove(doc_ids=[entry.doc_id])
+        pinboardmsg = await self.get_pinboard_message_for_channel(ctx.channel_id)                        
+        if pinboardmsg:
+            return await ctx.send("This channel has already a pinboard! Delete the existing pinboard first, then add a new one. Link to the existing pinboard message: " + str(pinboardmsg.url), ephemeral=True)
 
         # No pinboard message exists in this channel. Build the pinboard message and send it.
         pinboardmsg = await self.show_game_list(ctx=ctx, server_only=server_only, group_pass=group_pass, status="open", mygames=None, ephemeral=False, pinboard=True)
 
         # Now pin it
-        await ctx.channel.pin_message(pinboardmsg)
+        try:
+            await ctx.channel.pin_message(pinboardmsg)
+        except interactions.api.LibraryException:
+            returnmsg = await ctx.send("Could not create auto-updating pin message! Make sure that the Sommie bot has \"manage messages\" permission.", ephemeral=True)
+            pinboardmsg.delete()
+            return returnmsg
 
         # And now save it in database for automated updates 
+        pinboard_messages = self.db.table("pinboards")
         server_id = ""
         if ctx.guild_id:
             server_id = str(ctx.guild_id)
@@ -802,7 +797,7 @@ class FeeCoop(interactions.Extension):
             logging.info("Notify_users: Sending private message to " + user_obj.username + "#" + user_obj.discriminator)
             return await user_obj.send(embeds=[embed], components=components)
 
- # Find all pinboards on all servers and update them with new information if needed
+    # Find all pinboards on all servers and update them with new information if needed
     async def update_pinboards(self, game_wants_server_only=False, server_id="", group_pass=""):
         if not server_id:
             game_wants_server_only = False
@@ -831,6 +826,11 @@ class FeeCoop(interactions.Extension):
                 logging.info("update_pinboards: Pinboard message or channel was deleted, removing from update list.")
                 pinboard_messages.remove(doc_ids=[pinboard.doc_id])
             
+            seconds_since_pinboard_posted = (datetime.datetime.now() - message_obj.timestamp).seconds
+            if seconds_since_pinboard_posted > 28800:
+                logging.info("update_pinboards: Pinboard last active more than 8 hours ago. Reposting it. " + str(message_obj.timestamp))
+                replace_message = False
+
             # Get the parameters of this pinboard
             server_only = pinboard.get("pinboards_server_only")
             server_id = pinboard.get("pinboards_server_id")
@@ -841,15 +841,15 @@ class FeeCoop(interactions.Extension):
             if replace_message:
                 try: 
                     await message_obj.edit(embeds=[embed], components=components)
-                    logging.info("update_pinboards: Pinboard editing succesful in channel " + str(channel_obj.name))
+                    logging.info("update_pinboards: Pinboard editing successful in channel " + str(channel_obj.name))
                 except:
                     # If editing doesnt work, send the message anew
-                    logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
+                    logging.info("update_pinboards: Pinboard editing was not successful, sending new message in channel " + str(channel_obj.name))
                     replace_message = False
 
             # Send a new message if replacing didnt work
             if not replace_message:
-                logging.info("update_pinboards: Pinboard editing was not succesful, sending new message in channel " + str(channel_obj.name))
+                logging.info("update_pinboards: Sending pinboard as new message in channel " + str(channel_obj.name))
                 pinboardmsg = await channel_obj.send(embeds=[embed], components=components)
                 await channel_obj.pin_message(pinboardmsg)
 
@@ -860,7 +860,7 @@ class FeeCoop(interactions.Extension):
                     try:
                         message_obj.delete()
                     except:
-                        logging.info("update_pinboards: Deleting old pinned message was not succesul either. Nothing we can do")
+                        logging.info("update_pinboards: Deleting old pinned message was not successful.")
 
     # Fee coop to show or create a game
     @fee.subcommand(
@@ -890,10 +890,18 @@ class FeeCoop(interactions.Extension):
                         required=False,
                         autocomplete=True,
                 ),
+                interactions.Option(
+                        name="show_public",
+                        description="Post the game public for everyone in this channel",
+                        type=interactions.OptionType.BOOLEAN,
+                        value=False,
+                        required=False,
+                ),
             ]
         )
-    async def fee_coop(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass=""):
-        return await self.show_or_create_game(ctx=ctx, code=code, server_only=server_only, group_pass=group_pass, ephemeral=False)
+    async def fee_coop(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass="", show_public : bool = False):
+        ephemeral = not show_public
+        return await self.show_or_create_game(ctx=ctx, code=code, server_only=server_only, group_pass=group_pass, ephemeral=ephemeral)
 
     async def show_or_create_game(self, ctx: interactions.CommandContext, code : str = "", server_only=False, group_pass="", ephemeral=False):
         logging.info("Show or create game by user " + ctx.user.username + "#" + ctx.user.discriminator + " Code: " + code + " Server_only: " + str(server_only) + " group pass: " + group_pass)
@@ -1204,13 +1212,20 @@ class FeeCoop(interactions.Extension):
 
     # Update the games status
     async def update_game(self, ctx, doc_id = None, new_status = "open"):
+        # If previous message was ephemeral, set this to ephemeral too
         if ctx.message and ctx.message.flags and ctx.message.flags == 64:
             ephemeral = True
         else:
             ephemeral = False
 
+        # Show off with cool success messages, unless this is a pinboard channel were we reduce spam
         if new_status == "success":
             ephemeral = False
+            if ctx.channel:
+                pinboardmsg = await self.get_pinboard_message_for_channel(ctx.channel_id)                        
+                if pinboardmsg:
+                    # Dont show success messages in pinboard channels to reduce spam
+                    ephemeral = True
 
         # Game found?
         if not doc_id:
@@ -1280,6 +1295,24 @@ class FeeCoop(interactions.Extension):
         await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
         
         return updatemessage
+
+    # Expects ctx.channel_id and returns the channels pinboard message if it exists, otherwise None
+    async def get_pinboard_message_for_channel(self, channel_id):
+        pinboardmsg = None
+        pinboard_messages = self.db.table("pinboards")
+        PinBoardQ = Query()
+        entry = pinboard_messages.get(PinBoardQ.pinboards_channel == str(channel_id))
+        if entry:
+            # This channel has already a pinned message
+            existing_message_id = entry.get("pinboards_message")
+            try:
+                # Does the pinboard message really exist or is it just an entry in the database?
+                pinboardmsg = await interactions.get(self.bot, interactions.Message, object_id=existing_message_id, parent_id=channel_id)
+            except interactions.api.LibraryException:
+                # The pinboard message doesnt exist anymore, clean up database too while we are at it
+                pinboard_messages.remove(doc_ids=[entry.doc_id])
+                pinboardmsg = None
+        return pinboardmsg
 
     # Continue game
     @interactions.extension_component("game_ongoing")
