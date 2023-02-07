@@ -1119,6 +1119,7 @@ class FeeCoop(interactions.Extension):
                 # Game already exists
                 return await ctx.send("Can not reinstate old game, because a new game with the code " + code + " already exists.", ephemeral=True)
 
+            await ctx.defer(ephemeral=True)
             # Just update status and timestamp
             turns = entry.get("turns")
             turns[-1]["timestamp"] = datetime.datetime.utcnow().isoformat()
@@ -1358,6 +1359,7 @@ class FeeCoop(interactions.Extension):
     # Join game failed
     @interactions.extension_component("join_game_failed")
     async def join_game_failed(self, ctx):
+        await ctx.defer(ephemeral=True)
         doc_id = await self.get_doc_id_from_message(ctx, status="open")
 
         user_id = str(ctx.user.id)
