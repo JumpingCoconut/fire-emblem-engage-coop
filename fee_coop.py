@@ -527,7 +527,7 @@ class FeeCoop(interactions.Extension):
         ],
         default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
     )
-    async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = None):
+    async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = ""):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
 
         # Does this channel already have a pinboard message?
@@ -1271,13 +1271,15 @@ class FeeCoop(interactions.Extension):
                 )
             files = [fxy]
 
+        # Update message in the current channel for the updating user
+        updatemessage = await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
+
         # Update all pinboards
         group_pass = entry.get("group_pass")
         server_only = entry.get("server_only")
         await self.update_pinboards(game_wants_server_only=server_only, server_id=this_server_id, group_pass=group_pass)
-
-        # Update message in the current channel for the updating user
-        return await ctx.send(embeds=[embed], files=files, ephemeral=ephemeral)
+        
+        return updatemessage
 
     # Continue game
     @interactions.extension_component("game_ongoing")
