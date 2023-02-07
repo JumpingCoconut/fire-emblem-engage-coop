@@ -801,17 +801,27 @@ class FeeCoop(interactions.Extension):
     async def update_pinboards(self, game_wants_server_only=False, server_id="", group_pass=""):
         if not server_id:
             game_wants_server_only = False
+
+        if game_wants_server_only:
+            group_pass = ""
             
         pinboard_messages = self.db.table("pinboards")
         PinBoardQ = Query()
         if game_wants_server_only:
-            # All pinboards in channels on this server
-            pinboards = pinboard_messages.search((PinBoardQ.pinboards_server_only == True) & (PinBoardQ.pinboards_server_id == server_id))
+            # This game is only availible on this server so only update pinboards on this server
+            pinboards_search_fragment = {"pinboards_group_pass" : group_pass, "pinboards_server_id" : server_id}
             logging.info("update_pinboards: Updating pinboards for server only " + server_id)
         else:
             # All pinboards on all servers with this group pass. Blank is also a valid group pass as it is the default.
-            pinboards = pinboard_messages.search(PinBoardQ.pinboards_group_pass == group_pass)
+            pinboards_search_fragment = {"pinboards_group_pass" : group_pass}
             logging.info("update_pinboards: Updating pinboards for group pass: " + group_pass)
+        
+        # Also, the servers we search for should either ignore server restrictions, or have the exact same server as us
+        pinboards = pinboard_messages.search(   (PinBoardQ.fragment(pinboards_search_fragment)) 
+                                                & (   
+                                                    (PinBoardQ.fragment({"pinboards_server_only" : False}))
+                                                    | (PinBoardQ.fragment({"pinboards_server_id" : server_id}))
+                                                ))
 
         for pinboard in pinboards:
             logging.info("update_pinboards: Found pinboard " + str(pinboard))
