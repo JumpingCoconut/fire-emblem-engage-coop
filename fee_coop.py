@@ -73,7 +73,7 @@ class FeeCoop(interactions.Extension):
             turns = entry.get("turns", [])
             last_activity = turns[-1]["timestamp"]
             timestamp = datetime.datetime.fromisoformat(last_activity)
-            days_since_last_activity = (datetime.datetime.now() - timestamp).days
+            days_since_last_activity = (datetime.datetime.utcnow() - timestamp).days
 
             # Older than 1 day? Remove and tell the owner that he can add it again anytime
             if days_since_last_activity > 1:
@@ -826,8 +826,8 @@ class FeeCoop(interactions.Extension):
                 logging.info("update_pinboards: Pinboard message or channel was deleted, removing from update list.")
                 pinboard_messages.remove(doc_ids=[pinboard.doc_id])
             
-            timestamp = datetime.datetime.fromisoformat(message_obj.timestamp)
-            seconds_since_pinboard_posted = (datetime.datetime.now() - timestamp).seconds
+            #seconds_since_pinboard_posted = (datetime.datetime.now() - message_obj.timestamp).seconds
+            seconds_since_pinboard_posted = 1
             if seconds_since_pinboard_posted > 28800:
                 logging.info("update_pinboards: Pinboard last active more than 8 hours ago. Reposting it. " + str(message_obj.timestamp))
                 replace_message = False
