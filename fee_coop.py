@@ -825,6 +825,7 @@ class FeeCoop(interactions.Extension):
                 # The message doesnt exist anymore, remove from database.
                 logging.info("update_pinboards: Pinboard message or channel was deleted, removing from update list.")
                 pinboard_messages.remove(doc_ids=[pinboard.doc_id])
+                continue
             
             seconds_since_pinboard_posted = (datetime.datetime.now(tz=message_obj.timestamp.tzinfo) - message_obj.timestamp).seconds
             if seconds_since_pinboard_posted > 28800:
