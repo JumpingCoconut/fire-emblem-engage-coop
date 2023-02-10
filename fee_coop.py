@@ -523,7 +523,7 @@ class FeeCoop(interactions.Extension):
                     autocomplete=True,
             ),
         ],
-        #default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
+        default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
     )
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = ""):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
