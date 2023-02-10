@@ -274,9 +274,9 @@ class FeeCoop(interactions.Extension):
             components = [[s1]]
 
         # Add a new game button
-        if pinboard: # TODO make this button always availible
-            b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(name="🆕"))
-            components = [[b1]]
+        # if pinboard:
+        b1 = Button(style=3, custom_id="add_new_game", label="Add new game", emoji=interactions.Emoji(name="🆕"))
+        components = [[b1]]
 
         # If multiple components, make them pretts
         if s1 and b1:
@@ -523,7 +523,7 @@ class FeeCoop(interactions.Extension):
                     autocomplete=True,
             ),
         ],
-        default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
+        #default_member_permissions = interactions.Permissions.MANAGE_MESSAGES
     )
     async def pinboard(self, ctx: interactions.CommandContext, server_only : bool = False, group_pass : str = ""):
         logging.info("Request fee_pinboard by " + ctx.user.username + "#" + ctx.user.discriminator)
@@ -545,9 +545,10 @@ class FeeCoop(interactions.Extension):
         try:
             await ctx.channel.pin_message(pinboardmsg)
         except interactions.api.LibraryException:
-            returnmsg = await ctx.send("Could not create auto-updating pin message! Make sure that the Sommie bot has \"manage messages\" permission.", ephemeral=True)
-            pinboardmsg.delete()
-            return returnmsg
+            # returnmsg = await ctx.send("Could not create auto-updating pin message! Make sure that the Sommie bot has \"manage messages\" permission.", ephemeral=True)
+            # pinboardmsg.delete()
+            # return returnmsg
+            pass
 
         # And now save it in database for automated updates 
         pinboard_messages = self.db.table("pinboards")
@@ -862,7 +863,10 @@ class FeeCoop(interactions.Extension):
             if not replace_message:
                 logging.info("update_pinboards: Sending pinboard as new message in channel " + str(channel_obj.name))
                 pinboardmsg = await channel_obj.send(embeds=[embed], components=components)
-                await channel_obj.pin_message(pinboardmsg)
+                try:
+                    await channel_obj.pin_message(pinboardmsg)
+                except:
+                    pass
 
                 # Update the database with the new message ID
                 pinboard_messages.update({"pinboards_message" : str(pinboardmsg.id)}, doc_ids=[pinboard.doc_id])
@@ -1102,7 +1106,13 @@ class FeeCoop(interactions.Extension):
         b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700), disabled=last_turn)
         b2 = Button(style=1, custom_id="game_success", label="Success!", emoji=interactions.Emoji(id=1068852878661398548))
         b3 = Button(style=2, custom_id="game_over", label="Game Over", emoji=interactions.Emoji(id=1068852433129832558))
-        b4 = Button(style=4, custom_id="join_game_failed", label="Dead game? Click here to delete this game", emoji=interactions.Emoji(id=1068863333526151230))
+
+        # Button to vote for removal of the game
+        deadgamelabel = "Dead game? Delete entry"
+        deletion_votes = entry.get("deletion_votes", [])
+        if len(deletion_votes) > 0:
+            deadgamelabel = "Dead game (" + str(len(deletion_votes)) + "/3 votes)"
+        b4 = Button(style=4, custom_id="join_game_failed", label=deadgamelabel, emoji=interactions.Emoji(id=1068863333526151230))
         components = spread_to_rows(b1, b2, b3, b4)
 
         return await ctx.send(embeds=[embed], components=components, ephemeral=ephemeral)
