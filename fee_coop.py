@@ -1071,11 +1071,6 @@ class FeeCoop(interactions.Extension):
 
         entry = self.db.get(doc_id=doc_id)
 
-        # User already in the game?
-        turns = entry.get("turns", [])
-        if str(ctx.user.id) in [turn['user'] for turn in turns]:
-            return await ctx.send("You already participated in the game, you can't join it again.", ephemeral=True)
-
         # Tell the user how to join the game
         server_only = entry.get("server_only")
         group_pass = entry.get("group_pass")
@@ -1096,16 +1091,24 @@ class FeeCoop(interactions.Extension):
         embed.description = added_description + "\n\n\n" + embed.description
         embed.description = embed.description[0:4096]
 
+        # Determine which buttons need to be disabled for this user. 
         last_turn = False
         map = entry["map"]
         maxplayers = self.mapdata[map]["maxplayers"]
         if len(turns) >= (maxplayers - 1):
             last_turn = True
+        # If the user already participated in the game, dont participate again!
+        user_is_participant, user_is_host = await self.is_user_in_game(doc_id=doc_id, user=ctx.user)
+        if user_is_participant or last_turn:
+            # If this is the last turn, game cant be ongoing anymore, either win or lose now
+            ongoing_button_disabled = True
+        else:
+            ongoing_button_disabled = False
 
         # Make the buttons to ask the user if it worked or not
-        b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700), disabled=last_turn)
-        b2 = Button(style=1, custom_id="game_success", label="Success!", emoji=interactions.Emoji(id=1068852878661398548))
-        b3 = Button(style=2, custom_id="game_over", label="Game Over", emoji=interactions.Emoji(id=1068852433129832558))
+        b1 = Button(style=3, custom_id="game_ongoing", label="Still ongoing", emoji=interactions.Emoji(id=1068863754713968700), disabled=ongoing_button_disabled)
+        b2 = Button(style=1, custom_id="game_success", label="Success!", emoji=interactions.Emoji(id=1068852878661398548), disabled=user_is_participant)
+        b3 = Button(style=2, custom_id="game_over", label="Game Over", emoji=interactions.Emoji(id=1068852433129832558), disabled=user_is_participant)
 
         # Button to vote for removal of the game
         deadgamelabel = "Dead game? Delete entry"
