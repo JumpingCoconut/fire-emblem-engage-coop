@@ -96,7 +96,10 @@ class FeeCoop(interactions.Extension):
                 # Host gets the "create new game" button
                 components = await self.build_components_for_game(doc_id=entry.doc_id, for_user=started_userobj)
                 logging.info("Purge_old_entries: Sending private message to " +  started_userobj.username + "#" + started_userobj.discriminator)
-                await started_userobj.send(embeds=[embed], components=components)
+                try:
+                    await started_userobj.send(embeds=[embed], components=components)
+                except interactions.api.LibraryException as e:
+                    logging.info("Purge_old_entries: Failed to send private message," + str(e))
                     
 
     # Shows the current game list in the channel
@@ -796,7 +799,11 @@ class FeeCoop(interactions.Extension):
             embed.description = embed.description[0:4096]
             components = await self.build_components_for_game(doc_id=doc_id, for_user=user_obj)
             logging.info("Notify_users: Sending private message to " + user_obj.username + "#" + user_obj.discriminator)
-            return await user_obj.send(embeds=[embed], components=components)
+            try:
+                return await user_obj.send(embeds=[embed], components=components)
+            except interactions.api.LibraryException as e:
+                logging.info("Notify_users: Failed to send private message, " + str(e))
+                return
 
     # Find all pinboards on all servers and update them with new information if needed
     async def update_pinboards(self, game_wants_server_only=False, server_id="", group_pass=""):
@@ -1304,7 +1311,10 @@ class FeeCoop(interactions.Extension):
                     )
                 files = [fxy]
                 logging.info("Update_game: Sending private message to " + userobj.username + "#" + userobj.discriminator)
-                await userobj.send(embeds=[embed], files=files)
+                try:
+                    await userobj.send(embeds=[embed], files=files)
+                except interactions.api.LibraryException as e:
+                    logging.info("Update_game: Failed to send private message, " + str(e))
 
             # We have to provide the file again and again for every single send
             f = open(final_picture_path, mode='rb')
@@ -1476,7 +1486,10 @@ class FeeCoop(interactions.Extension):
         else:
             started_userobj._client = self.client._http
             logging.info("delete_game_and_message_host: Sending private message to " + started_userobj.username + "#" + started_userobj.discriminator)
-            await started_userobj.send(embeds=[embed], components=components)
+            try:
+                await started_userobj.send(embeds=[embed], components=components)
+            except interactions.api.LibraryException as e:
+                logging.info("delete_game_and_message_host: Failed to send private message, " + str(e))
             return await ctx.send("Game abandoned with " + str(len(deletion_votes)) + " votes. The host can reinstate the game anytime if desired.", ephemeral=True)      
 
     # Select menu processing of game select
