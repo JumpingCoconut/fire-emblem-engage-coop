@@ -75,8 +75,8 @@ class FeeCoop(interactions.Extension):
             timestamp = datetime.datetime.fromisoformat(last_activity)
             days_since_last_activity = (datetime.datetime.utcnow() - timestamp).days
 
-            # Older than 1 day? Remove and tell the owner that he can add it again anytime
-            if days_since_last_activity > 1:
+            # Older than 2 days? Remove and tell the owner that he can add it again anytime
+            if days_since_last_activity > 2:
                 logging.info("Purge_old_entries: Game is " + str(days_since_last_activity) + " days old.")
                 
                 # Update game status
@@ -850,6 +850,11 @@ class FeeCoop(interactions.Extension):
                 logging.info("update_pinboards: Pinboard last active more than 8 hours ago. Reposting it. " + str(message_obj.timestamp))
                 replace_message = False
 
+            new_messages_in_channel = channel_obj.history(start_at=message_id, reverse=True, maximum=3)
+            if len(new_messages_in_channel) > 2:
+                logging.info("update_pinboards: Pinboard is more than 2 messages old. Reposting it. " + str(message_obj.timestamp))
+                replace_message = False
+
             # Get the parameters of this pinboard
             server_only = pinboard.get("pinboards_server_only")
             server_id = pinboard.get("pinboards_server_id")
@@ -1261,7 +1266,9 @@ class FeeCoop(interactions.Extension):
                 pinboardmsg = await self.get_pinboard_message_for_channel(ctx.channel_id)                        
                 if pinboardmsg:
                     # Dont show success messages in pinboard channels to reduce spam
-                    ephemeral = True
+                    # ephemeral = True
+                    # No, we take the spam.
+                    pass
 
         # Game found?
         if not doc_id:
