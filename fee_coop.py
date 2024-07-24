@@ -851,7 +851,7 @@ class FeeCoop(interactions.Extension):
                 replace_message = False
 
             new_messages_in_channel = channel_obj.history(start_at=message_id, reverse=True, maximum=3)
-            if len(new_messages_in_channel) > 2:
+            if new_messages_in_channel.object_count > 2:
                 logging.info("update_pinboards: Pinboard is more than 2 messages old. Reposting it. " + str(message_obj.timestamp))
                 replace_message = False
 
